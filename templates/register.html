@@ -1,0 +1,393 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Create Account | EyeCare AI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body class="auth-page">
+
+
+    <div class="auth-background">
+
+        <div class="auth-glow auth-glow-one"></div>
+
+        <div class="auth-glow auth-glow-two"></div>
+
+    </div>
+
+
+    <!-- NAVBAR -->
+
+    <header class="auth-navbar">
+
+        <a href="/login" class="logo">
+
+            <span class="logo-icon">
+                ◉
+            </span>
+
+            <span>
+                EyeCare<span class="logo-highlight">AI</span>
+            </span>
+
+        </a>
+
+    </header>
+
+
+    <main class="auth-container">
+
+
+        <!-- REGISTER CARD -->
+
+        <section class="auth-card register-card">
+
+
+            <div class="auth-card-header">
+
+                <div class="auth-mini-icon">
+                    +
+                </div>
+
+                <div class="section-tag">
+                    GET STARTED
+                </div>
+
+                <h1>
+                    Create your account
+                </h1>
+
+                <p>
+                    Create an account to access
+                    your EyeCare AI workspace.
+                </p>
+
+            </div>
+
+
+            {% if error %}
+
+            <div class="error-message">
+
+                {{ error }}
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- REGISTER FORM -->
+
+            <form
+                class="auth-form"
+                method="POST"
+                action="{{ url_for('register') }}"
+            >
+
+
+                <!-- NAME -->
+
+                <div class="form-group">
+
+                    <label for="fullName">
+                        Full name
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            ◇
+                        </span>
+
+                        <input
+                            type="text"
+                            id="fullName"
+                            name="name"
+                            placeholder="Your full name"
+                            autocomplete="name"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label for="registerEmail">
+                        Email address
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            @
+                        </span>
+
+                        <input
+                            type="email"
+                            id="registerEmail"
+                            name="email"
+                            placeholder="you@example.com"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="form-group">
+
+                    <label for="registerPassword">
+                        Password
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            •
+                        </span>
+
+                        <input
+                            type="password"
+                            id="registerPassword"
+                            name="password"
+                            placeholder="Create a password"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            data-target="registerPassword"
+                        >
+                            Show
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- CONFIRM PASSWORD -->
+
+                <div class="form-group">
+
+                    <label for="confirmPassword">
+                        Confirm password
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            •
+                        </span>
+
+                        <input
+                            type="password"
+                            id="confirmPassword"
+                            name="confirm_password"
+                            placeholder="Repeat your password"
+                            autocomplete="new-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            data-target="confirmPassword"
+                        >
+                            Show
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- TERMS -->
+
+                <label class="terms-row">
+
+                    <input
+                        type="checkbox"
+                        required
+                    >
+
+                    <span>
+
+                        I agree to the terms and understand
+                        that EyeCare AI is a screening aid,
+                        not a medical diagnosis.
+
+                    </span>
+
+                </label>
+
+
+                <!-- REGISTER BUTTON -->
+
+                <button
+                    type="submit"
+                    class="auth-submit"
+                >
+
+                    <span>
+                        Create account
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+
+            </form>
+
+
+            <div class="auth-divider">
+
+                <span>
+                    ALREADY REGISTERED?
+                </span>
+
+            </div>
+
+
+            <div class="auth-footer-text">
+
+                Already have an account?
+
+                <a href="{{ url_for('login') }}">
+                    Sign in
+                </a>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- SIDE -->
+
+        <aside class="auth-side">
+
+            <div class="side-badge">
+                YOUR SCREENING WORKSPACE
+            </div>
+
+
+            <h2>
+
+                Start with a
+                <span>clearer view.</span>
+
+            </h2>
+
+
+            <p>
+
+                Upload retinal fundus images,
+                analyze disease severity and
+                visualize the AI's attention.
+
+            </p>
+
+
+            <div class="mini-pipeline">
+
+
+                <div class="mini-pipeline-item">
+
+                    <span>
+                        01
+                    </span>
+
+                    Upload
+
+                </div>
+
+
+                <div class="mini-pipeline-line"></div>
+
+
+                <div class="mini-pipeline-item">
+
+                    <span>
+                        02
+                    </span>
+
+                    Analyze
+
+                </div>
+
+
+                <div class="mini-pipeline-line"></div>
+
+
+                <div class="mini-pipeline-item">
+
+                    <span>
+                        03
+                    </span>
+
+                    Explain
+
+                </div>
+
+
+            </div>
+
+
+        </aside>
+
+
+    </main>
+
+
+    <script
+        src="{{ url_for('static', filename='js/script.js') }}"
+    ></script>
+
+
+</body>
+
+</html>

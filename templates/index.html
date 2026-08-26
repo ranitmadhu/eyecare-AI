@@ -1,0 +1,2290 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <meta
+        name="description"
+        content="EyeCare AI - AI-powered retinal screening for diabetic retinopathy."
+    >
+
+    <title>EyeCare AI | AI Retinal Screening</title>
+
+
+    <!-- Google Font -->
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@400;500;600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+
+    <!-- Main CSS -->
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body>
+
+
+    <!-- ================= NAVBAR ================= -->
+
+    <header class="navbar">
+
+        <div class="container nav-container">
+
+
+            <!-- LOGO -->
+
+            <a href="/" class="logo">
+
+                <span class="logo-icon">
+                    ◉
+                </span>
+
+                <span>
+                    EyeCare<span class="logo-highlight">AI</span>
+                </span>
+
+            </a>
+
+
+
+            <!-- NAV LINKS -->
+
+            <nav
+                class="nav-links"
+                id="navLinks"
+            >
+
+
+                <a
+                    href="#home"
+                    class="nav-link active"
+                >
+                    Home
+                </a>
+
+
+                <a
+                    href="#how-it-works"
+                    class="nav-link"
+                >
+                    How it works
+                </a>
+
+
+                <a
+                    href="#technology"
+                    class="nav-link"
+                >
+                    Technology
+                </a>
+
+
+                <a
+                    href="#demo"
+                    class="nav-link"
+                >
+                    Screening
+                </a>
+
+
+            </nav>
+
+
+
+            <!-- NAV ACTIONS -->
+
+            <div class="nav-actions">
+
+
+                <!-- LOGIN -->
+
+                <a
+                    href="/login"
+                    class="login-link"
+                >
+                    Log in
+                </a>
+
+
+
+                <!-- GET STARTED -->
+
+                <a
+                    href="#demo"
+                    class="nav-button"
+                >
+                    Get started
+                </a>
+
+
+
+                <!-- ACCOUNT -->
+
+                <div class="account-menu">
+
+
+                    <button
+                        type="button"
+                        class="account-button"
+                        id="accountButton"
+                    >
+
+                        <span class="account-avatar">
+                            {% if session.get("name") %}
+                                {{ session.get("name")[0]|upper }}
+                            {% else %}
+                                U
+                            {% endif %}
+                        </span>
+
+
+                        <span class="account-button-text">
+                            Account
+                        </span>
+
+
+                        <span class="account-arrow">
+                            ▾
+                        </span>
+
+                    </button>
+
+
+
+                    <!-- ACCOUNT DROPDOWN -->
+
+                    <div
+                        class="account-dropdown"
+                        id="accountDropdown"
+                    >
+
+
+                        <!-- USER HEADER -->
+
+                        <div class="account-user">
+
+
+                            <div class="account-large-avatar">
+
+                                {% if session.get("name") %}
+                                    {{ session.get("name")[0]|upper }}
+                                {% else %}
+                                    U
+                                {% endif %}
+
+                            </div>
+
+
+                            <div>
+
+                                <strong>
+
+                                    {% if session.get("name") %}
+                                        {{ session.get("name") }}
+                                    {% else %}
+                                        Guest User
+                                    {% endif %}
+
+                                </strong>
+
+
+                                <small>
+
+                                    {% if session.get("user") %}
+                                        {{ session.get("user") }}
+                                    {% else %}
+                                        Not logged in
+                                    {% endif %}
+
+                                </small>
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="account-divider"></div>
+
+
+
+                        <!-- ACCOUNT DETAILS -->
+
+                        {% if session.get("user") %}
+
+                        <a
+                            href="#account-details"
+                            class="account-item"
+                        >
+
+                            <span>
+                                ◇
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Account Details
+                                </strong>
+
+                                <small>
+                                    View your profile
+                                </small>
+
+                            </div>
+
+                        </a>
+
+
+
+                        <!-- LOGOUT -->
+
+                        <a
+                            href="{{ url_for('logout') }}"
+                            class="account-item logout-item"
+                        >
+
+                            <span>
+                                ↪
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Logout
+                                </strong>
+
+                                <small>
+                                    Sign out of EyeCare AI
+                                </small>
+
+                            </div>
+
+                        </a>
+
+                        {% else %}
+
+
+                        <!-- LOGIN -->
+
+                        <a
+                            href="{{ url_for('login') }}"
+                            class="account-item"
+                        >
+
+                            <span>
+                                →
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Login
+                                </strong>
+
+                                <small>
+                                    Sign in to your account
+                                </small>
+
+                            </div>
+
+                        </a>
+
+
+                        {% endif %}
+
+
+
+                        <div class="account-divider"></div>
+
+
+
+                        <!-- ABOUT -->
+
+                        <a
+                            href="#about"
+                            class="account-item"
+                        >
+
+                            <span>
+                                ✦
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    About EyeCare AI
+                                </strong>
+
+                                <small>
+                                    Learn about the project
+                                </small>
+
+                            </div>
+
+                        </a>
+
+
+
+                        <!-- EYE CARE -->
+
+                        <a
+                            href="#eye-care"
+                            class="account-item"
+                        >
+
+                            <span>
+                                ◎
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Eye Care Tips
+                                </strong>
+
+                                <small>
+                                    Keep your eyes healthy
+                                </small>
+
+                            </div>
+
+                        </a>
+
+
+
+                        <!-- HELP -->
+
+                        <a
+                            href="#help"
+                            class="account-item"
+                        >
+
+                            <span>
+                                ?
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Customer Help
+                                </strong>
+
+                                <small>
+                                    Need assistance?
+                                </small>
+
+                            </div>
+
+                        </a>
+
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+
+            <!-- MOBILE MENU -->
+
+            <button
+                class="menu-toggle"
+                id="menuToggle"
+                aria-label="Open menu"
+            >
+
+                <span></span>
+
+                <span></span>
+
+                <span></span>
+
+            </button>
+
+
+        </div>
+
+    </header>
+
+
+
+    <main>
+
+
+        <!-- ================= HERO ================= -->
+
+        <section
+            class="hero"
+            id="home"
+        >
+
+
+            <div class="hero-background-glow glow-one"></div>
+
+            <div class="hero-background-glow glow-two"></div>
+
+
+            <div class="container hero-container">
+
+
+                <div class="hero-content">
+
+
+                    <div class="eyebrow">
+
+                        <span class="status-dot"></span>
+
+                        AI-powered ophthalmology
+
+                    </div>
+
+
+                    <h1>
+
+                        Retinal disease,
+                        caught <em>early.</em>
+
+                        <br>
+
+                        Explained clearly.
+
+                    </h1>
+
+
+                    <p class="hero-description">
+
+                        Upload a fundus image and EyeCare AI grades
+                        diabetic retinopathy severity in seconds —
+                        with an explainable heatmap showing where
+                        the model is looking.
+
+                    </p>
+
+
+                    <div class="hero-buttons">
+
+
+                        <a
+                            href="#demo"
+                            class="primary-button"
+                        >
+
+                            <span>
+                                Upload a retina image
+                            </span>
+
+                            <span class="button-arrow">
+                                ↗
+                            </span>
+
+                        </a>
+
+
+                        <a
+                            href="#how-it-works"
+                            class="secondary-button"
+                        >
+                            See how it works
+                        </a>
+
+
+                    </div>
+
+
+                    <div class="trust-row">
+
+
+                        <div class="trust-item">
+
+                            <span class="trust-icon">
+                                ✓
+                            </span>
+
+                            Trained on APTOS & EyePACS
+
+                        </div>
+
+
+                        <div class="trust-item">
+
+                            <span class="trust-icon">
+                                ✓
+                            </span>
+
+                            5-stage severity grading
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <!-- HERO VISUAL -->
+
+                <div class="hero-visual">
+
+
+                    <div class="retina-card">
+
+
+                        <div class="card-top">
+
+
+                            <div>
+
+                                <span class="mini-label">
+                                    RETINAL ANALYSIS
+                                </span>
+
+                                <h3>
+                                    AI Screening
+                                </h3>
+
+                            </div>
+
+
+                            <div class="live-badge">
+
+                                <span></span>
+
+                                AI READY
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="retina-preview">
+
+
+                            <div class="retina-circle">
+
+
+                                <div class="retina-core"></div>
+
+
+                                <div
+                                    class="retina-vessel vessel-one"
+                                ></div>
+
+
+                                <div
+                                    class="retina-vessel vessel-two"
+                                ></div>
+
+
+                                <div
+                                    class="retina-vessel vessel-three"
+                                ></div>
+
+
+                                <div
+                                    class="retina-vessel vessel-four"
+                                ></div>
+
+
+                                <div class="scan-line"></div>
+
+
+                            </div>
+
+
+                            <div class="scan-label">
+
+                                <span></span>
+
+                                SCANNING RETINA
+
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="analysis-info">
+
+
+                            <div class="analysis-row">
+
+                                <span>
+                                    Model
+                                </span>
+
+                                <strong>
+                                    EfficientNet-B0
+                                </strong>
+
+                            </div>
+
+
+                            <div class="analysis-row">
+
+                                <span>
+                                    Explainability
+                                </span>
+
+                                <strong>
+                                    Grad-CAM
+                                </strong>
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div
+                        class="floating-card card-top-right"
+                    >
+
+                        <div class="floating-icon">
+                            ✦
+                        </div>
+
+
+                        <div>
+
+                            <small>
+                                AI CONFIDENCE
+                            </small>
+
+                            <strong>
+                                94.8%
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div
+                        class="floating-card card-bottom-left"
+                    >
+
+                        <div class="heat-icon">
+                            ◌
+                        </div>
+
+
+                        <div>
+
+                            <small>
+                                HEATMAP
+                            </small>
+
+                            <strong>
+                                Generated
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= STATS ================= -->
+
+        <section class="stats-section">
+
+
+            <div class="container stats-grid">
+
+
+                <div class="stat-item">
+
+                    <strong>
+                        5
+                    </strong>
+
+                    <span>
+                        DR severity stages
+                    </span>
+
+                </div>
+
+
+                <div class="stat-item">
+
+                    <strong>
+                        AI
+                    </strong>
+
+                    <span>
+                        Powered screening
+                    </span>
+
+                </div>
+
+
+                <div class="stat-item">
+
+                    <strong>
+                        CAM
+                    </strong>
+
+                    <span>
+                        Visual explainability
+                    </span>
+
+                </div>
+
+
+                <div class="stat-item">
+
+                    <strong>
+                        24/7
+                    </strong>
+
+                    <span>
+                        Digital accessibility
+                    </span>
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= FEATURES ================= -->
+
+        <section class="features-section">
+
+
+            <div class="container">
+
+
+                <div class="section-heading">
+
+
+                    <div class="section-tag">
+                        EARLY DETECTION
+                    </div>
+
+
+                    <h2>
+
+                        Screening that
+                        <span>explains itself.</span>
+
+                    </h2>
+
+
+                    <p>
+
+                        EyeCare AI combines deep learning with visual
+                        explainability to make retinal screening easier
+                        to understand.
+
+                    </p>
+
+
+                </div>
+
+
+
+                <div class="feature-grid">
+
+
+                    <article class="feature-card">
+
+
+                        <div class="feature-number">
+                            01
+                        </div>
+
+
+                        <div class="feature-icon">
+                            ◎
+                        </div>
+
+
+                        <h3>
+                            Early detection
+                        </h3>
+
+
+                        <p>
+
+                            Flags signs of diabetic retinopathy that
+                            may require further clinical evaluation.
+
+                        </p>
+
+
+                        <div class="feature-line"></div>
+
+
+                    </article>
+
+
+
+                    <article
+                        class="feature-card featured-card"
+                    >
+
+
+                        <div class="feature-number">
+                            02
+                        </div>
+
+
+                        <div class="feature-icon">
+                            ◈
+                        </div>
+
+
+                        <h3>
+                            Severity graded
+                        </h3>
+
+
+                        <p>
+
+                            Classifies retinal images across five
+                            diabetic retinopathy severity stages.
+
+                        </p>
+
+
+                        <div class="severity-mini">
+
+                            <span>No DR</span>
+
+                            <span>Mild</span>
+
+                            <span>Moderate</span>
+
+                            <span>Severe</span>
+
+                            <span>PDR</span>
+
+                        </div>
+
+
+                    </article>
+
+
+
+                    <article class="feature-card">
+
+
+                        <div class="feature-number">
+                            03
+                        </div>
+
+
+                        <div class="feature-icon">
+                            ✧
+                        </div>
+
+
+                        <h3>
+                            Grad-CAM overlay
+                        </h3>
+
+
+                        <p>
+
+                            Highlights retinal regions that most
+                            influenced the model's prediction.
+
+                        </p>
+
+
+                        <div class="feature-line"></div>
+
+
+                    </article>
+
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= HOW IT WORKS ================= -->
+
+        <section
+            class="process-section"
+            id="how-it-works"
+        >
+
+
+            <div class="container">
+
+
+                <div
+                    class="section-heading center-heading"
+                >
+
+
+                    <div class="section-tag">
+                        THE PROCESS
+                    </div>
+
+
+                    <h2>
+
+                        From fundus image
+                        <span>to graded result.</span>
+
+                    </h2>
+
+
+                    <p>
+
+                        Four simple steps connect the retinal image
+                        to an explainable AI screening result.
+
+                    </p>
+
+
+                </div>
+
+
+
+                <div class="process-grid">
+
+
+                    <div class="process-card">
+
+
+                        <div class="process-icon">
+                            ↑
+                        </div>
+
+
+                        <span class="process-step">
+                            01
+                        </span>
+
+
+                        <h3>
+                            Upload image
+                        </h3>
+
+
+                        <p>
+
+                            Upload a retinal fundus photograph in
+                            standard JPG or PNG format.
+
+                        </p>
+
+
+                    </div>
+
+
+
+                    <div class="process-card">
+
+
+                        <div class="process-icon">
+                            ◉
+                        </div>
+
+
+                        <span class="process-step">
+                            02
+                        </span>
+
+
+                        <h3>
+                            Model analyzes
+                        </h3>
+
+
+                        <p>
+
+                            The AI model examines retinal patterns
+                            associated with diabetic retinopathy.
+
+                        </p>
+
+
+                    </div>
+
+
+
+                    <div class="process-card">
+
+
+                        <div class="process-icon">
+                            ≋
+                        </div>
+
+
+                        <span class="process-step">
+                            03
+                        </span>
+
+
+                        <h3>
+                            Severity graded
+                        </h3>
+
+
+                        <p>
+
+                            The result is classified across five
+                            clinical severity categories.
+
+                        </p>
+
+
+                    </div>
+
+
+
+                    <div class="process-card">
+
+
+                        <div class="process-icon">
+                            ✦
+                        </div>
+
+
+                        <span class="process-step">
+                            04
+                        </span>
+
+
+                        <h3>
+                            Heatmap shown
+                        </h3>
+
+
+                        <p>
+
+                            Grad-CAM highlights retinal regions
+                            driving the prediction.
+
+                        </p>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= DEMO ================= -->
+
+        <section
+            class="demo-section"
+            id="demo"
+        >
+
+
+            <div class="container">
+
+
+                <div class="demo-wrapper">
+
+
+                    <div class="demo-header">
+
+
+                        <div>
+
+
+                            <div class="section-tag">
+                                TRY A SCREENING
+                            </div>
+
+
+                            <h2>
+
+                                See EyeCare AI
+                                <span>in action.</span>
+
+                            </h2>
+
+
+                        </div>
+
+
+                        <p>
+
+                            Upload a fundus image to preview how the
+                            screening interface presents an AI result.
+
+                        </p>
+
+
+                    </div>
+
+
+
+                    <div
+                        class="upload-area"
+                        id="uploadArea"
+                    >
+
+
+                        <input
+                            type="file"
+                            id="imageInput"
+                            accept="image/png, image/jpeg"
+                            hidden
+                        >
+
+
+                        <div class="upload-icon">
+                            ↑
+                        </div>
+
+
+                        <h3>
+                            Drop a retina image here
+                        </h3>
+
+
+                        <p>
+
+                            or
+
+                            <button
+                                type="button"
+                                id="browseButton"
+                            >
+                                click to browse
+                            </button>
+
+                        </p>
+
+
+                        <span class="upload-limit">
+                            JPG or PNG · Up to 10MB
+                        </span>
+
+
+                        <div
+                            class="image-preview-container"
+                            id="imagePreviewContainer"
+                        >
+
+                            <img
+                                id="imagePreview"
+                                src=""
+                                alt="Retina preview"
+                            >
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <button
+                        class="analyze-button"
+                        id="analyzeButton"
+                        type="button"
+                    >
+
+                        <span>
+                            Analyze image
+                        </span>
+
+                        <span class="analyze-arrow">
+                            →
+                        </span>
+
+                    </button>
+
+
+
+                    <!-- DEMO RESULT -->
+
+                    <div
+                        class="result-card"
+                        id="resultCard"
+                    >
+
+
+                        <div class="result-header">
+
+
+                            <div>
+
+                                <span class="result-label">
+                                    RESULT
+                                </span>
+
+                                <h3>
+                                    Moderate diabetic retinopathy
+                                </h3>
+
+                            </div>
+
+
+                            <div class="result-status">
+                                SCREENING RESULT
+                            </div>
+
+
+                        </div>
+
+
+
+                        <div class="result-content">
+
+
+                            <div class="result-main">
+
+
+                                <div class="severity-circle">
+
+                                    <strong>
+                                        61%
+                                    </strong>
+
+                                    <span>
+                                        Moderate
+                                    </span>
+
+                                </div>
+
+
+                            </div>
+
+
+
+                            <div class="probability-list">
+
+
+                                <div class="probability-item">
+
+
+                                    <div class="probability-label">
+
+                                        <span>
+                                            No DR
+                                        </span>
+
+                                        <strong>
+                                            4%
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="progress">
+
+                                        <span
+                                            style="width: 4%;"
+                                        ></span>
+
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <div class="probability-item">
+
+
+                                    <div class="probability-label">
+
+                                        <span>
+                                            Mild
+                                        </span>
+
+                                        <strong>
+                                            12%
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="progress">
+
+                                        <span
+                                            style="width: 12%;"
+                                        ></span>
+
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <div
+                                    class="probability-item active"
+                                >
+
+
+                                    <div class="probability-label">
+
+                                        <span>
+                                            Moderate
+                                        </span>
+
+                                        <strong>
+                                            61%
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="progress">
+
+                                        <span
+                                            style="width: 61%;"
+                                        ></span>
+
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <div class="probability-item">
+
+
+                                    <div class="probability-label">
+
+                                        <span>
+                                            Severe
+                                        </span>
+
+                                        <strong>
+                                            18%
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="progress">
+
+                                        <span
+                                            style="width: 18%;"
+                                        ></span>
+
+                                    </div>
+
+
+                                </div>
+
+
+
+                                <div class="probability-item">
+
+
+                                    <div class="probability-label">
+
+                                        <span>
+                                            Proliferative
+                                        </span>
+
+                                        <strong>
+                                            5%
+                                        </strong>
+
+                                    </div>
+
+
+                                    <div class="progress">
+
+                                        <span
+                                            style="width: 5%;"
+                                        ></span>
+
+                                    </div>
+
+
+                                </div>
+
+
+                            </div>
+
+
+                        </div>
+
+
+                        <div class="disclaimer">
+
+                            Screening aid only, not a diagnosis.
+                            Confirm any result with an ophthalmologist.
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= TECHNOLOGY ================= -->
+
+        <section
+            class="technology-section"
+            id="technology"
+        >
+
+
+            <div
+                class="container technology-container"
+            >
+
+
+                <div class="technology-content">
+
+
+                    <div class="section-tag">
+                        UNDER THE HOOD
+                    </div>
+
+
+                    <h2>
+
+                        Built on transfer learning,
+                        <span>read with Grad-CAM.</span>
+
+                    </h2>
+
+
+                    <p>
+
+                        The classifier performs the grading.
+                        Grad-CAM adds visual context, helping users
+                        understand which retinal regions influenced
+                        the prediction.
+
+                    </p>
+
+
+
+                    <div class="tech-item">
+
+
+                        <div class="tech-number">
+                            01
+                        </div>
+
+
+                        <div>
+
+                            <span class="tech-label">
+                                CLASSIFIER
+                            </span>
+
+                            <h3>
+                                EfficientNet-B0
+                            </h3>
+
+                            <p>
+
+                                A lightweight convolutional neural
+                                network fine-tuned for retinal image
+                                classification.
+
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+
+
+                    <div class="tech-item">
+
+
+                        <div class="tech-number">
+                            02
+                        </div>
+
+
+                        <div>
+
+                            <span class="tech-label">
+                                EXPLAINABILITY
+                            </span>
+
+                            <h3>
+                                Grad-CAM
+                            </h3>
+
+                            <p>
+
+                                Generates a visual heatmap highlighting
+                                areas that influenced the model's output.
+
+                            </p>
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+
+                <div class="technology-visual">
+
+
+                    <div class="model-card">
+
+
+                        <div class="model-header">
+
+                            <span>
+                                MODEL PIPELINE
+                            </span>
+
+                            <span class="model-status">
+                                ● ACTIVE
+                            </span>
+
+                        </div>
+
+
+
+                        <div class="pipeline">
+
+
+                            <div class="pipeline-node">
+
+                                <span>
+                                    01
+                                </span>
+
+                                Fundus Image
+
+                            </div>
+
+
+                            <div class="pipeline-line"></div>
+
+
+                            <div class="pipeline-node">
+
+                                <span>
+                                    02
+                                </span>
+
+                                EfficientNet
+
+                            </div>
+
+
+                            <div class="pipeline-line"></div>
+
+
+                            <div class="pipeline-node">
+
+                                <span>
+                                    03
+                                </span>
+
+                                DR Grade
+
+                            </div>
+
+
+                            <div class="pipeline-line"></div>
+
+
+                            <div class="pipeline-node">
+
+                                <span>
+                                    04
+                                </span>
+
+                                Grad-CAM
+
+                            </div>
+
+
+                        </div>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= ABOUT ================= -->
+
+        <section
+            class="about-section"
+            id="about"
+        >
+
+            <div class="container">
+
+                <div class="section-heading">
+
+                    <div class="section-tag">
+                        ABOUT EYECARE AI
+                    </div>
+
+                    <h2>
+                        Smarter screening,
+                        <span>clearer understanding.</span>
+                    </h2>
+
+                    <p>
+                        EyeCare AI is a final-year CSE (AI/ML)
+                        project designed to demonstrate how
+                        artificial intelligence can assist with
+                        diabetic retinopathy screening.
+                    </p>
+
+                </div>
+
+
+                <div class="about-grid">
+
+
+                    <div class="about-card">
+
+                        <div class="about-icon">
+                            ◉
+                        </div>
+
+                        <h3>
+                            AI-assisted screening
+                        </h3>
+
+                        <p>
+                            The system analyzes retinal fundus
+                            images and estimates diabetic
+                            retinopathy severity across five stages.
+                        </p>
+
+                    </div>
+
+
+                    <div class="about-card">
+
+                        <div class="about-icon">
+                            ✦
+                        </div>
+
+                        <h3>
+                            Explainable results
+                        </h3>
+
+                        <p>
+                            Grad-CAM helps visualize the retinal
+                            regions that influenced the model's
+                            prediction.
+                        </p>
+
+                    </div>
+
+
+                    <div class="about-card">
+
+                        <div class="about-icon">
+                            ✓
+                        </div>
+
+                        <h3>
+                            Screening, not diagnosis
+                        </h3>
+
+                        <p>
+                            EyeCare AI is an educational screening
+                            aid. Clinical decisions should always
+                            be made by a qualified ophthalmologist.
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= EYE CARE ================= -->
+
+        <section
+            class="eye-care-section"
+            id="eye-care"
+        >
+
+            <div class="container">
+
+                <div class="section-heading center-heading">
+
+                    <div class="section-tag">
+                        EYE HEALTH
+                    </div>
+
+                    <h2>
+                        Simple habits for
+                        <span>healthier eyes.</span>
+                    </h2>
+
+                    <p>
+                        Everyday habits can support long-term
+                        eye health. Regular professional eye
+                        examinations are also important.
+                    </p>
+
+                </div>
+
+
+                <div class="eye-care-grid">
+
+
+                    <div class="care-card">
+
+                        <span class="care-number">
+                            01
+                        </span>
+
+                        <h3>
+                            Regular eye exams
+                        </h3>
+
+                        <p>
+                            Schedule comprehensive eye examinations
+                            as recommended by your eye-care professional.
+                        </p>
+
+                    </div>
+
+
+                    <div class="care-card">
+
+                        <span class="care-number">
+                            02
+                        </span>
+
+                        <h3>
+                            Protect your eyes
+                        </h3>
+
+                        <p>
+                            Use appropriate eye protection when working
+                            around dust, chemicals, sports equipment,
+                            or other potential hazards.
+                        </p>
+
+                    </div>
+
+
+                    <div class="care-card">
+
+                        <span class="care-number">
+                            03
+                        </span>
+
+                        <h3>
+                            Follow the 20-20-20 rule
+                        </h3>
+
+                        <p>
+                            During prolonged screen use, regularly look
+                            at something about 20 feet away for around
+                            20 seconds.
+                        </p>
+
+                    </div>
+
+
+                    <div class="care-card">
+
+                        <span class="care-number">
+                            04
+                        </span>
+
+                        <h3>
+                            Manage overall health
+                        </h3>
+
+                        <p>
+                            Healthy lifestyle choices and proper
+                            management of conditions such as diabetes
+                            can support eye health.
+                        </p>
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= HELP ================= -->
+
+        <section
+            class="help-section"
+            id="help"
+        >
+
+            <div class="container">
+
+                <div class="help-card">
+
+
+                    <div class="help-content">
+
+                        <div class="section-tag">
+                            CUSTOMER HELP
+                        </div>
+
+                        <h2>
+                            Need a little
+                            <span>help?</span>
+                        </h2>
+
+                        <p>
+                            If you have questions about the EyeCare AI
+                            interface, account access, or screening
+                            workflow, contact the project support team.
+                        </p>
+
+                    </div>
+
+
+                    <div class="help-options">
+
+
+                        <a
+                            href="mailto:support@eyecare-ai.com"
+                            class="help-option"
+                        >
+
+                            <span class="help-option-icon">
+                                @
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Email Support
+                                </strong>
+
+                                <small>
+                                    support@eyecare-ai.com
+                                </small>
+
+                            </div>
+
+                        </a>
+
+
+                        <a
+                            href="tel:+911800000000"
+                            class="help-option"
+                        >
+
+                            <span class="help-option-icon">
+                                ☎
+                            </span>
+
+                            <div>
+
+                                <strong>
+                                    Customer Helpline
+                                </strong>
+
+                                <small>
+                                    1800-000-000
+                                </small>
+
+                            </div>
+
+                        </a>
+
+
+                    </div>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+
+
+        <!-- ================= ACCOUNT DETAILS ================= -->
+
+        {% if session.get("user") %}
+
+        <section
+            class="account-details-section"
+            id="account-details"
+        >
+
+            <div class="container">
+
+                <div class="account-details-card">
+
+
+                    <div class="section-tag">
+                        ACCOUNT
+                    </div>
+
+
+                    <h2>
+                        Your account
+                        <span>details.</span>
+                    </h2>
+
+
+                    <div class="account-details-grid">
+
+
+                        <div class="detail-box">
+
+                            <span>
+                                NAME
+                            </span>
+
+                            <strong>
+                                {{ session.get("name") }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail-box">
+
+                            <span>
+                                EMAIL
+                            </span>
+
+                            <strong>
+                                {{ session.get("user") }}
+                            </strong>
+
+                        </div>
+
+
+                        <div class="detail-box">
+
+                            <span>
+                                ACCOUNT TYPE
+                            </span>
+
+                            <strong>
+                                EyeCare AI User
+                            </strong>
+
+                        </div>
+
+
+                    </div>
+
+
+                    <a
+                        href="{{ url_for('logout') }}"
+                        class="logout-button"
+                    >
+                        Logout
+                    </a>
+
+
+                </div>
+
+            </div>
+
+        </section>
+
+        {% endif %}
+
+
+
+        <!-- ================= CTA ================= -->
+
+        <section class="cta-section">
+
+
+            <div class="container">
+
+
+                <div class="cta-card">
+
+
+                    <div class="cta-glow"></div>
+
+
+                    <div class="cta-content">
+
+
+                        <div class="section-tag">
+                            EYECARE AI
+                        </div>
+
+
+                        <h2>
+
+                            Make retinal screening
+                            <span>more explainable.</span>
+
+                        </h2>
+
+
+                        <p>
+
+                            Explore the screening interface and
+                            understand how AI can assist retinal
+                            disease assessment.
+
+                        </p>
+
+
+                        <a
+                            href="#demo"
+                            class="primary-button cta-button"
+                        >
+
+                            Try the demo
+
+                            <span>
+                                ↗
+                            </span>
+
+                        </a>
+
+
+                    </div>
+
+
+                </div>
+
+
+            </div>
+
+
+        </section>
+
+
+    </main>
+
+
+
+    <!-- ================= FOOTER ================= -->
+
+    <footer class="footer">
+
+
+        <div class="container footer-container">
+
+
+            <div class="footer-brand">
+
+
+                <a
+                    href="/"
+                    class="logo"
+                >
+
+                    <span class="logo-icon">
+                        ◉
+                    </span>
+
+                    <span>
+                        EyeCare<span class="logo-highlight">AI</span>
+                    </span>
+
+                </a>
+
+
+                <p>
+
+                    AI-powered retinal screening built for
+                    early detection and explainable results.
+
+                </p>
+
+
+            </div>
+
+
+
+            <div class="footer-links">
+
+
+                <div>
+
+
+                    <span class="footer-title">
+                        PRODUCT
+                    </span>
+
+
+                    <a href="#demo">
+                        Screening
+                    </a>
+
+
+                    <a href="#technology">
+                        Technology
+                    </a>
+
+
+                    <a href="#how-it-works">
+                        How it works
+                    </a>
+
+
+                </div>
+
+
+
+                <div>
+
+
+                    <span class="footer-title">
+                        PROJECT
+                    </span>
+
+
+                    <a href="#about">
+                        About
+                    </a>
+
+
+                    <a href="#help">
+                        Contact
+                    </a>
+
+
+                    <a href="/login">
+                        Login
+                    </a>
+
+
+                </div>
+
+
+            </div>
+
+
+        </div>
+
+
+
+        <div class="container footer-bottom">
+
+
+            <span>
+                © 2026 EyeCare AI
+            </span>
+
+
+            <span>
+                A final-year CSE (AI/ML) project
+            </span>
+
+
+            <span>
+                Built for screening, not diagnosis.
+            </span>
+
+
+        </div>
+
+
+    </footer>
+
+
+
+    <!-- Main JavaScript -->
+
+    <script
+        src="{{ url_for('static', filename='js/script.js') }}"
+    ></script>
+
+
+</body>
+
+</html>

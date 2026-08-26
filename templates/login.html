@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+    <meta charset="UTF-8">
+
+    <meta
+        name="viewport"
+        content="width=device-width, initial-scale=1.0"
+    >
+
+    <title>Login | EyeCare AI</title>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+
+    <link
+        rel="preconnect"
+        href="https://fonts.gstatic.com"
+        crossorigin
+    >
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;600;700&family=Manrope:wght@600;700;800&display=swap"
+        rel="stylesheet"
+    >
+
+    <link
+        rel="stylesheet"
+        href="{{ url_for('static', filename='css/style.css') }}"
+    >
+
+</head>
+
+
+<body class="auth-page">
+
+
+    <div class="auth-background">
+
+        <div class="auth-glow auth-glow-one"></div>
+
+        <div class="auth-glow auth-glow-two"></div>
+
+    </div>
+
+
+    <!-- NAVBAR -->
+
+    <header class="auth-navbar">
+
+        <a href="/login" class="logo">
+
+            <span class="logo-icon">
+                ◉
+            </span>
+
+            <span>
+                EyeCare<span class="logo-highlight">AI</span>
+            </span>
+
+        </a>
+
+    </header>
+
+
+    <!-- MAIN -->
+
+    <main class="auth-container">
+
+
+        <!-- LOGIN CARD -->
+
+        <section class="auth-card">
+
+
+            <div class="auth-card-header">
+
+                <div class="auth-mini-icon">
+                    ◉
+                </div>
+
+                <div class="section-tag">
+                    EYECARE AI
+                </div>
+
+                <h1>
+                    Welcome back
+                </h1>
+
+                <p>
+                    Sign in to continue to your
+                    retinal screening workspace.
+                </p>
+
+            </div>
+
+
+            <!-- REGISTER SUCCESS -->
+
+            {% if request.args.get("registered") %}
+
+            <div class="success-message">
+
+                Account created successfully.
+                Please sign in.
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- ERROR -->
+
+            {% if error %}
+
+            <div class="error-message">
+
+                {{ error }}
+
+            </div>
+
+            {% endif %}
+
+
+            <!-- LOGIN FORM -->
+
+            <form
+                class="auth-form"
+                method="POST"
+                action="{{ url_for('login') }}"
+            >
+
+
+                <!-- EMAIL -->
+
+                <div class="form-group">
+
+                    <label for="loginEmail">
+                        Email address
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            @
+                        </span>
+
+                        <input
+                            type="email"
+                            id="loginEmail"
+                            name="email"
+                            placeholder="you@example.com"
+                            autocomplete="email"
+                            required
+                        >
+
+                    </div>
+
+                </div>
+
+
+                <!-- PASSWORD -->
+
+                <div class="form-group">
+
+                    <label for="loginPassword">
+                        Password
+                    </label>
+
+                    <div class="input-wrapper">
+
+                        <span class="input-icon">
+                            •
+                        </span>
+
+                        <input
+                            type="password"
+                            id="loginPassword"
+                            name="password"
+                            placeholder="Enter your password"
+                            autocomplete="current-password"
+                            required
+                        >
+
+                        <button
+                            type="button"
+                            class="password-toggle"
+                            data-target="loginPassword"
+                        >
+                            Show
+                        </button>
+
+                    </div>
+
+                </div>
+
+
+                <!-- REMEMBER -->
+
+                <label class="remember-row">
+
+                    <input
+                        type="checkbox"
+                        name="remember"
+                    >
+
+                    <span>
+                        Remember me
+                    </span>
+
+                </label>
+
+
+                <!-- LOGIN -->
+
+                <button
+                    type="submit"
+                    class="auth-submit"
+                >
+
+                    <span>
+                        Sign in
+                    </span>
+
+                    <span>
+                        →
+                    </span>
+
+                </button>
+
+
+            </form>
+
+
+            <div class="auth-divider">
+
+                <span>
+                    OR
+                </span>
+
+            </div>
+
+
+            <!-- REGISTER -->
+
+            <div class="auth-footer-text">
+
+                Don't have an account?
+
+                <a href="{{ url_for('register') }}">
+                    Create account
+                </a>
+
+            </div>
+
+
+        </section>
+
+
+        <!-- RIGHT SIDE -->
+
+        <aside class="auth-side">
+
+            <div class="side-badge">
+                AI-POWERED OPHTHALMOLOGY
+            </div>
+
+
+            <h2>
+
+                See the
+                <span>signal.</span>
+
+            </h2>
+
+
+            <p>
+
+                EyeCare AI combines retinal image analysis
+                with explainable artificial intelligence
+                to make screening results easier to understand.
+
+            </p>
+
+
+            <div class="side-features">
+
+
+                <div class="side-feature">
+
+                    <span>
+                        ✓
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            5-stage grading
+                        </strong>
+
+                        <small>
+                            No DR to Proliferative DR
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="side-feature">
+
+                    <span>
+                        ✦
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Explainable AI
+                        </strong>
+
+                        <small>
+                            Grad-CAM visual heatmaps
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+                <div class="side-feature">
+
+                    <span>
+                        ◉
+                    </span>
+
+                    <div>
+
+                        <strong>
+                            Screening focused
+                        </strong>
+
+                        <small>
+                            Built for educational screening
+                        </small>
+
+                    </div>
+
+                </div>
+
+
+            </div>
+
+
+        </aside>
+
+
+    </main>
+
+
+    <!-- JAVASCRIPT -->
+
+    <script
+        src="{{ url_for('static', filename='js/script.js') }}"
+    ></script>
+
+
+</body>
+
+</html>
