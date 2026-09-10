@@ -31,17 +31,17 @@ def login_required():
     return "user" in session
 
 
+# 1. Home page: always open index.html first.
 @app.route("/")
 def home():
-    # First visit: show the landing page.
-    # Logged-in users also see the screening section on the same page.
     return render_template("index.html", name=session.get("name"), logged_in=login_required())
 
 
+# 2. Login page.
 @app.route("/login", methods=["GET", "POST"])
 def login():
     if login_required():
-        return redirect(url_for("home"))
+        return redirect(url_for("analysis"))
 
     if request.method == "POST":
         email = request.form.get("email", "").strip().lower()
@@ -56,15 +56,18 @@ def login():
 
         session["user"] = email
         session["name"] = users[email]["name"]
-        return redirect(url_for("home"))
+
+        # After successful login, go directly to analysis page.
+        return redirect(url_for("analysis"))
 
     return render_template("login.html")
 
 
+# 3. Register page.
 @app.route("/register", methods=["GET", "POST"])
 def register():
     if login_required():
-        return redirect(url_for("home"))
+        return redirect(url_for("analysis"))
 
     if request.method == "POST":
         name = request.form.get("name", "").strip()
@@ -90,6 +93,16 @@ def register():
     return render_template("register.html")
 
 
+# 4. Analysis page: only logged-in users can access it.
+@app.route("/analysis")
+def analysis():
+    if not login_required():
+        return redirect(url_for("login"))
+
+    return render_template("analysis.html", name=session.get("name"))
+
+
+# 5. Prediction API used by analysis.html.
 @app.route("/predict", methods=["POST"])
 def predict():
     if not login_required():
@@ -129,6 +142,7 @@ def predict():
     })
 
 
+# 6. Generate PDF report from the analysis result.
 @app.route("/generate_report", methods=["POST"])
 def generate_report():
     if not login_required():
@@ -197,6 +211,7 @@ def generate_report():
     )
 
 
+# 7. Logout: clear the session and return to index.html.
 @app.route("/logout")
 def logout():
     session.clear()
