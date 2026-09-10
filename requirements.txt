@@ -1,3 +1,6 @@
+Flask
+Werkzeug
+reportlab
 pandas
 numpy
 tensorflow
