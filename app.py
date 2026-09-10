@@ -4,12 +4,11 @@ from werkzeug.security import generate_password_hash, check_password_hash
 
 app = Flask(__name__)
 
-# Session-এর জন্য secret key
 app.secret_key = "eyecare-ai-secret-key-change-this-later"
 
 
 # Temporary users
-# পরে এটাকে MySQL/SQLite database দিয়ে replace করব
+
 users = {}
 
 
@@ -20,7 +19,7 @@ users = {}
 @app.route("/login", methods=["GET", "POST"])
 def login():
 
-    # যদি already login করা থাকে
+    
     if "user" in session:
         return redirect(url_for("home"))
 
