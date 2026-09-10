@@ -5,7 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>EyeCare AI — Eye Disease Screening</title>
 <style>
-body{font-family:Arial,sans-serif;margin:0;background:#f7f5fb;color:#161326}.wrap{max-width:1000px;margin:auto;padding:30px}.demo-card{background:#fff;border:1px solid #ddd;border-radius:18px;padding:30px;display:grid;grid-template-columns:1fr 1fr;gap:30px}.dropzone{display:block;border:2px dashed #aaa;border-radius:14px;padding:35px;text-align:center;cursor:pointer}.dropzone img{max-width:100%;max-height:220px;margin-bottom:15px;border-radius:10px}#fileInput{display:none}.btn{width:100%;padding:14px;border:0;border-radius:8px;background:#161326;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;margin-top:18px}.btn:disabled{opacity:.6}.result{background:#f7f5fb;padding:25px;border-radius:14px}.result-badge{font-size:20px;font-weight:bold;margin-bottom:20px}.row{display:flex;align-items:center;gap:10px;margin:12px 0}.row span:first-child{width:150px;font-size:14px}.track{height:10px;background:#ddd;border-radius:8px;flex:1;overflow:hidden}.fill{height:100%;background:#5b4fe0;width:0}.pct{width:40px;text-align:right;font-size:13px}.note{font-size:13px;color:#666;margin-top:20px}.mode{font-size:12px;color:#a3402c;margin-bottom:15px}@media(max-width:700px){.demo-card{grid-template-columns:1fr}.wrap{padding:15px}}
+body{font-family:Arial,sans-serif;margin:0;background:#f7f5fb;color:#161326}.wrap{max-width:1000px;margin:auto;padding:30px}.demo-card{background:#fff;border:1px solid #ddd;border-radius:18px;padding:30px;display:grid;grid-template-columns:1fr 1fr;gap:30px}.dropzone{display:block;border:2px dashed #aaa;border-radius:14px;padding:35px;text-align:center;cursor:pointer}.dropzone img{max-width:100%;max-height:220px;margin-bottom:15px;border-radius:10px}#fileInput{display:none}.btn{width:100%;padding:14px;border:0;border-radius:8px;background:#161326;color:#fff;font-size:16px;font-weight:bold;cursor:pointer;margin-top:18px}.btn:disabled{opacity:.6}.report-btn{background:#4b3fc7;display:none}.result{background:#f7f5fb;padding:25px;border-radius:14px}.result-badge{font-size:20px;font-weight:bold;margin-bottom:20px}.row{display:flex;align-items:center;gap:10px;margin:12px 0}.row span:first-child{width:150px;font-size:14px}.track{height:10px;background:#ddd;border-radius:8px;flex:1;overflow:hidden}.fill{height:100%;background:#5b4fe0;width:0}.pct{width:40px;text-align:right;font-size:13px}.note{font-size:13px;color:#666;margin-top:20px}.mode{font-size:12px;color:#a3402c;margin-bottom:15px}@media(max-width:700px){.demo-card{grid-template-columns:1fr}.wrap{padding:15px}}
 </style>
 </head>
 <body>
@@ -32,6 +32,7 @@ body{font-family:Arial,sans-serif;margin:0;background:#f7f5fb;color:#161326}.wra
 <div class="row"><span>Cataract</span><div class="track"><div class="fill"></div></div><span class="pct">0%</span></div>
 <div class="row"><span>Glaucoma</span><div class="track"><div class="fill"></div></div><span class="pct">0%</span></div>
 <div class="row"><span>Diabetic Retinopathy</span><div class="track"><div class="fill"></div></div><span class="pct">0%</span></div>
+<button class="btn report-btn" id="reportBtn">Generate PDF Report</button>
 <p class="note">Screening aid only, not a medical diagnosis. Confirm results with an ophthalmologist.</p>
 </div>
 </div>
@@ -42,6 +43,8 @@ const previewImg=document.getElementById('previewImg');
 const dzText=document.getElementById('dzText');
 const dzSub=document.getElementById('dzSub');
 const analyzeBtn=document.getElementById('analyzeBtn');
+const reportBtn=document.getElementById('reportBtn');
+let lastResult=null;
 
 fileInput.addEventListener('change',()=>{
  const file=fileInput.files[0];
@@ -50,6 +53,7 @@ fileInput.addEventListener('change',()=>{
  previewImg.style.display='block';
  dzText.textContent=file.name;
  dzSub.textContent='Ready to analyze';
+ reportBtn.style.display='none';
 });
 
 analyzeBtn.addEventListener('click',async()=>{
@@ -62,14 +66,45 @@ analyzeBtn.addEventListener('click',async()=>{
   const response=await fetch('/predict',{method:'POST',body:data});
   const result=await response.json();
   if(!response.ok)throw new Error(result.error||'Prediction failed');
+  lastResult=result;
   updateResult(result);
+  reportBtn.style.display='block';
  }catch(error){alert(error.message);console.error(error);}
  finally{analyzeBtn.disabled=false;analyzeBtn.textContent='Analyze Image';}
 });
 
+reportBtn.addEventListener('click',async()=>{
+ if(!lastResult)return;
+ reportBtn.disabled=true;
+ reportBtn.textContent='Generating Report...';
+ try{
+  const response=await fetch('/generate_report',{
+   method:'POST',
+   headers:{'Content-Type':'application/json'},
+   body:JSON.stringify({
+    label:lastResult.label,
+    confidence:lastResult.confidence,
+    probabilities:lastResult.probabilities,
+    filename:fileInput.files[0]?.name||'retinal_image'
+   })
+  });
+  if(!response.ok){const error=await response.json();throw new Error(error.error||'Report generation failed');}
+  const blob=await response.blob();
+  const url=URL.createObjectURL(blob);
+  const a=document.createElement('a');
+  a.href=url;
+  a.download='EyeCare_AI_Report.pdf';
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+ }catch(error){alert(error.message);console.error(error);}
+ finally{reportBtn.disabled=false;reportBtn.textContent='Generate PDF Report';}
+});
+
 function updateResult(result){
  document.getElementById('resultLabel').textContent=result.label+' ('+result.confidence+'%)';
- document.getElementById('modeText').textContent=result.mode==='demo'?'DEMO MODE — no trained model connected':'AI MODEL RESULT';
+ document.getElementById('modeText').textContent=result.mode==='demo'?'DEMO MODE — no trained model connected yet':'AI MODEL RESULT';
  const labels=['Normal Retina','Cataract','Glaucoma','Diabetic Retinopathy'];
  document.querySelectorAll('.row').forEach((row,i)=>{
   const pct=result.probabilities[labels[i]]??0;
