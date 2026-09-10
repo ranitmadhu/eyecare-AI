@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analysis | EyeCare AI</title>
+<style>
+*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f6f8fc;color:#172033}.nav{height:70px;background:#fff;border-bottom:1px solid #e4e8ef;display:flex;align-items:center;justify-content:space-between;padding:0 7%;position:sticky;top:0;z-index:10}.logo{font-size:24px;font-weight:700;color:#25438f;text-decoration:none}.nav-links{display:flex;align-items:center;gap:18px}.nav-links a{color:#38445a;text-decoration:none}.btn{display:inline-block;border:0;border-radius:9px;padding:13px 22px;background:#3156c9;color:#fff;font-weight:700;cursor:pointer;text-decoration:none}.main{padding:60px 7%}.header{text-align:center;margin-bottom:35px}.header h1{font-size:40px;margin:0 0 12px}.header p{color:#697487;font-size:17px}.screen{max-width:900px;margin:auto;background:#fff;border:1px solid #e1e6ee;border-radius:18px;padding:35px;box-shadow:0 8px 30px rgba(30,50,90,.06)}.upload{border:2px dashed #bbc4d3;border-radius:13px;padding:40px;text-align:center}.upload strong{font-size:18px}.upload input{margin-top:18px}.preview{display:none;max-width:320px;max-height:260px;margin:20px auto 0;border-radius:10px}.analyze-wrap{text-align:center;margin-top:22px}.result{display:none;margin-top:28px;padding:25px;border-radius:13px;background:#f5f7fb}.result h2{margin-top:0}.message{margin:18px 0;padding:12px;border-radius:8px;background:#fff4d8;color:#705600;font-size:14px}.row{margin:14px 0}.rowhead{display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px}.track{height:10px;background:#dfe4ed;border-radius:20px;overflow:hidden}.fill{height:100%;width:0;background:#3156c9}.report{display:none;margin-top:20px}.note{text-align:center;color:#777;font-size:13px;margin-top:22px;line-height:1.5}.footer{text-align:center;padding:30px;background:#172033;color:#fff}@media(max-width:600px){.main{padding:40px 5%}.screen{padding:20px}.nav{padding:0 5%}.nav-links a:not(.btn){display:none}.header h1{font-size:32px}}
+</style>
+</head>
+<body>
+<header class="nav">
+<a href="{{ url_for('home') }}" class="logo">◉ EyeCare AI</a>
+<nav class="nav-links">
+<a href="{{ url_for('home') }}">Home</a>
+<a href="{{ url_for('logout') }}">Logout</a>
+</nav>
+</header>
+
+<main class="main">
+<section class="header">
+<h1>Eye Image Analysis</h1>
+<p>Welcome{% if name %}, {{ name }}{% endif %}. Upload a retinal image to start screening.</p>
+</section>
+
+<section class="screen">
+<div class="upload">
+<strong>Select retinal image</strong><br>
+<input type="file" id="imageInput" accept="image/png,image/jpeg,image/jpg">
+<img id="preview" class="preview" alt="Selected retinal image">
+</div>
+
+<div class="analyze-wrap">
+<button class="btn" id="analyzeBtn">Analyze Image</button>
+</div>
+
+<div class="result" id="result">
+<h2 id="prediction">Prediction</h2>
+<div id="message" class="message"></div>
+
+<div class="row"><div class="rowhead"><span>Normal Retina</span><span id="p0">0%</span></div><div class="track"><div class="fill" id="f0"></div></div></div>
+<div class="row"><div class="rowhead"><span>Cataract</span><span id="p1">0%</span></div><div class="track"><div class="fill" id="f1"></div></div></div>
+<div class="row"><div class="rowhead"><span>Glaucoma</span><span id="p2">0%</span></div><div class="track"><div class="fill" id="f2"></div></div></div>
+<div class="row"><div class="rowhead"><span>Diabetic Retinopathy</span><span id="p3">0%</span></div><div class="track"><div class="fill" id="f3"></div></div></div>
+
+<button class="btn report" id="reportBtn">Generate PDF Report</button>
+<p class="note">This is a project screening aid, not a medical diagnosis. Please consult a qualified ophthalmologist for clinical evaluation.</p>
+</div>
+</section>
+</main>
+
+<footer class="footer">EyeCare AI • ODIR-5K Retinal Image Classification Project</footer>
+
+<script>
+const input=document.getElementById('imageInput');
+const preview=document.getElementById('preview');
+const analyze=document.getElementById('analyzeBtn');
+const result=document.getElementById('result');
+const report=document.getElementById('reportBtn');
+let last=null;
+const labels=['Normal Retina','Cataract','Glaucoma','Diabetic Retinopathy'];
+
+input.addEventListener('change',()=>{
+    if(!input.files[0]) return;
+    preview.src=URL.createObjectURL(input.files[0]);
+    preview.style.display='block';
+    result.style.display='none';
+    report.style.display='none';
+});
+
+analyze.addEventListener('click',async()=>{
+    if(!input.files[0]){alert('Please select a retinal image first.');return;}
+    analyze.disabled=true;
+    analyze.textContent='Analyzing...';
+    const fd=new FormData();
+    fd.append('image',input.files[0]);
+    try{
+        const res=await fetch('{{ url_for("predict") }}',{method:'POST',body:fd});
+        const data=await res.json();
+        if(!res.ok) throw new Error(data.error||'Prediction failed');
+        last=data;
+        document.getElementById('prediction').textContent=data.label+' — '+data.confidence+'% confidence';
+        document.getElementById('message').textContent=data.message||'Result generated successfully.';
+        labels.forEach((label,i)=>{
+            const value=data.probabilities[label]||0;
+            document.getElementById('p'+i).textContent=value+'%';
+            document.getElementById('f'+i).style.width=value+'%';
+        });
+        result.style.display='block';
+        report.style.display='inline-block';
+    }catch(err){alert(err.message)}
+    finally{analyze.disabled=false;analyze.textContent='Analyze Image'}
+});
+
+report.addEventListener('click',async()=>{
+    if(!last)return;
+    report.disabled=true;
+    report.textContent='Generating...';
+    try{
+        const res=await fetch('{{ url_for("generate_report") }}',{
+            method:'POST',
+            headers:{'Content-Type':'application/json'},
+            body:JSON.stringify({label:last.label,confidence:last.confidence,probabilities:last.probabilities,filename:last.filename||input.files[0].name})
+        });
+        if(!res.ok){const data=await res.json();throw new Error(data.error||'Could not generate report')}
+        const blob=await res.blob();
+        const url=URL.createObjectURL(blob);
+        const a=document.createElement('a');
+        a.href=url;
+        a.download='EyeCare_AI_Report.pdf';
+        document.body.appendChild(a);
+        a.click();
+        a.remove();
+        URL.revokeObjectURL(url);
+    }catch(err){alert(err.message)}
+    finally{report.disabled=false;report.textContent='Generate PDF Report'}
+});
+</script>
+</body>
+</html>
