@@ -3,118 +3,871 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Analysis | EyeCare AI</title>
+<title>Bilateral Retinal Screening | EyeCare AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f6f8fc;color:#172033}.nav{height:70px;background:#fff;border-bottom:1px solid #e4e8ef;display:flex;align-items:center;justify-content:space-between;padding:0 7%;position:sticky;top:0;z-index:10}.logo{font-size:24px;font-weight:700;color:#25438f;text-decoration:none}.nav-links{display:flex;align-items:center;gap:18px}.nav-links a{color:#38445a;text-decoration:none}.btn{display:inline-block;border:0;border-radius:9px;padding:13px 22px;background:#3156c9;color:#fff;font-weight:700;cursor:pointer;text-decoration:none}.main{padding:60px 7%}.header{text-align:center;margin-bottom:35px}.header h1{font-size:40px;margin:0 0 12px}.header p{color:#697487;font-size:17px}.screen{max-width:900px;margin:auto;background:#fff;border:1px solid #e1e6ee;border-radius:18px;padding:35px;box-shadow:0 8px 30px rgba(30,50,90,.06)}.upload{border:2px dashed #bbc4d3;border-radius:13px;padding:40px;text-align:center}.upload strong{font-size:18px}.upload input{margin-top:18px}.preview{display:none;max-width:320px;max-height:260px;margin:20px auto 0;border-radius:10px}.analyze-wrap{text-align:center;margin-top:22px}.result{display:none;margin-top:28px;padding:25px;border-radius:13px;background:#f5f7fb}.result h2{margin-top:0}.message{margin:18px 0;padding:12px;border-radius:8px;background:#fff4d8;color:#705600;font-size:14px}.row{margin:14px 0}.rowhead{display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px}.track{height:10px;background:#dfe4ed;border-radius:20px;overflow:hidden}.fill{height:100%;width:0;background:#3156c9}.report{display:none;margin-top:20px}.note{text-align:center;color:#777;font-size:13px;margin-top:22px;line-height:1.5}.footer{text-align:center;padding:30px;background:#172033;color:#fff}@media(max-width:600px){.main{padding:40px 5%}.screen{padding:20px}.nav{padding:0 5%}.nav-links a:not(.btn){display:none}.header h1{font-size:32px}}
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #eff6ff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --bg-app: #f8fafc;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --normal: #10b981;
+  --cataract: #f59e0b;
+  --glaucoma: #8b5cf6;
+  --dr: #ef4444;
+  --radius: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background: var(--bg-app);
+  color: var(--text-main);
+  line-height: 1.5;
+}
+.nav {
+  height: 72px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6%;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--primary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.nav-links a {
+  color: var(--text-muted);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+.nav-links a:hover { color: var(--text-main); }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 24px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  text-decoration: none;
+  transition: all 0.2s ease;
+}
+.btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+.btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none; }
+.btn-secondary {
+  background: #f1f5f9;
+  color: var(--text-main);
+}
+.btn-secondary:hover { background: #e2e8f0; }
+
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+}
+.header-hero {
+  text-align: center;
+  margin-bottom: 35px;
+}
+.badge-pill {
+  display: inline-block;
+  padding: 6px 14px;
+  border-radius: 50px;
+  background: var(--primary-light);
+  color: var(--primary);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 12px;
+}
+.header-hero h1 {
+  font-size: 34px;
+  font-weight: 800;
+  color: var(--text-main);
+  letter-spacing: -0.5px;
+  margin-bottom: 8px;
+}
+.header-hero p {
+  color: var(--text-muted);
+  font-size: 16px;
+  max-width: 620px;
+  margin: 0 auto;
+}
+
+/* Patient Demographic Form Card */
+.patient-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px 30px;
+  margin-bottom: 25px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+}
+.patient-card h3 {
+  font-size: 16px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.patient-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 16px;
+}
+.form-group label {
+  display: block;
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.form-group input, .form-group select {
+  width: 100%;
+  padding: 10px 14px;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  font-family: inherit;
+  font-size: 14px;
+  outline: none;
+  background: #fbfcfe;
+}
+.form-group input:focus, .form-group select:focus {
+  border-color: var(--primary);
+  background: #fff;
+}
+
+/* Dual Eye Upload Section */
+.upload-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-bottom: 30px;
+}
+@media (max-width: 768px) {
+  .upload-grid { grid-template-columns: 1fr; }
+}
+.eye-box {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+  display: flex;
+  flex-direction: column;
+}
+.eye-box-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 16px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--border);
+}
+.eye-box-title {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  font-size: 17px;
+  font-weight: 700;
+}
+.eye-tag {
+  font-size: 11px;
+  font-weight: 800;
+  padding: 4px 8px;
+  border-radius: 6px;
+  text-transform: uppercase;
+}
+.tag-left { background: #dbeafe; color: #1e40af; }
+.tag-right { background: #dcfce7; color: #166534; }
+
+.dropzone {
+  border: 2px dashed #cbd5e1;
+  border-radius: 12px;
+  padding: 32px 20px;
+  text-align: center;
+  cursor: pointer;
+  background: #f8fafc;
+  transition: all 0.2s ease;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+.dropzone:hover {
+  border-color: var(--primary);
+  background: #f1f5f9;
+}
+.dropzone.dragover {
+  border-color: var(--primary);
+  background: var(--primary-light);
+}
+.dropzone svg {
+  width: 44px;
+  height: 44px;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+.dropzone p {
+  font-size: 14px;
+  color: var(--text-muted);
+}
+.dropzone strong { color: var(--text-main); }
+.file-input { display: none; }
+
+.preview-container {
+  display: none;
+  position: relative;
+  width: 100%;
+  margin-top: 15px;
+  text-align: center;
+}
+.preview-img {
+  max-width: 100%;
+  height: 220px;
+  object-fit: cover;
+  border-radius: 10px;
+  border: 1px solid var(--border);
+}
+.btn-remove {
+  margin-top: 10px;
+  background: #fee2e2;
+  color: #991b1b;
+  border: none;
+  padding: 6px 14px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Action Button */
+.cta-wrapper {
+  text-align: center;
+  margin-bottom: 40px;
+}
+.btn-scan {
+  padding: 16px 48px;
+  font-size: 16px;
+  border-radius: 12px;
+  box-shadow: 0 4px 14px rgba(37,99,235,0.3);
+}
+
+/* Results Section */
+.results-section {
+  display: none;
+}
+.triage-banner {
+  border-radius: var(--radius);
+  padding: 24px 30px;
+  margin-bottom: 30px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: 20px;
+}
+.triage-urgent { background: #fef2f2; border: 1px solid #fecaca; color: #991b1b; }
+.triage-moderate { background: #fffbeb; border: 1px solid #fde68a; color: #92400e; }
+.triage-routine { background: #f0fdf4; border: 1px solid #bbf7d0; color: #166534; }
+
+.triage-info h2 { font-size: 22px; font-weight: 800; margin-bottom: 6px; }
+.triage-info p { font-size: 15px; opacity: 0.9; }
+
+/* Bilateral Results Cards */
+.results-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 25px;
+  margin-bottom: 30px;
+}
+@media (max-width: 768px) {
+  .results-grid { grid-template-columns: 1fr; }
+}
+.result-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 24px;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+.result-title {
+  font-size: 18px;
+  font-weight: 700;
+  margin-bottom: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+.diagnosis-pill {
+  font-size: 13px;
+  font-weight: 700;
+  padding: 6px 12px;
+  border-radius: 8px;
+}
+.diag-normal { background: #d1fae5; color: #065f46; }
+.diag-cataract { background: #fef3c7; color: #92400e; }
+.diag-glaucoma { background: #ede9fe; color: #5b21b6; }
+.diag-dr { background: #fee2e2; color: #991b1b; }
+
+.images-row {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-bottom: 20px;
+}
+.img-panel {
+  text-align: center;
+}
+.img-panel span {
+  display: block;
+  font-size: 11px;
+  font-weight: 700;
+  color: var(--text-muted);
+  margin-bottom: 6px;
+  text-transform: uppercase;
+}
+.img-panel img {
+  width: 100%;
+  height: 180px;
+  object-fit: cover;
+  border-radius: 8px;
+  border: 1px solid var(--border);
+}
+
+.prob-bars {
+  margin-top: 15px;
+}
+.prob-row { margin-bottom: 12px; }
+.prob-meta {
+  display: flex;
+  justify-content: space-between;
+  font-size: 13px;
+  font-weight: 600;
+  margin-bottom: 5px;
+}
+.prob-track {
+  height: 9px;
+  background: #f1f5f9;
+  border-radius: 10px;
+  overflow: hidden;
+}
+.prob-fill {
+  height: 100%;
+  width: 0%;
+  border-radius: 10px;
+  transition: width 0.8s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.fill-normal { background: var(--normal); }
+.fill-cataract { background: var(--cataract); }
+.fill-glaucoma { background: var(--glaucoma); }
+.fill-dr { background: var(--dr); }
+
+/* Report Action Box */
+.report-action-box {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 30px;
+  text-align: center;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.03);
+}
+.report-action-box h3 {
+  font-size: 20px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+.report-action-box p {
+  color: var(--text-muted);
+  font-size: 14px;
+  max-width: 550px;
+  margin: 0 auto 20px;
+}
+
+.footer {
+  text-align: center;
+  padding: 30px;
+  color: var(--text-muted);
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+  background: #ffffff;
+}
 </style>
 </head>
 <body>
+
 <header class="nav">
-<a href="{{ url_for('home') }}" class="logo">◉ EyeCare AI</a>
-<nav class="nav-links">
-<a href="{{ url_for('home') }}">Home</a>
-<a href="{{ url_for('logout') }}">Logout</a>
-</nav>
+  <a href="{{ url_for('home') }}" class="logo">
+    <svg width="26" height="26" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round">
+      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+    EyeCare AI
+  </a>
+  <nav class="nav-links">
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('history') }}">History</a>
+    <a href="{{ url_for('logout') }}">Sign Out</a>
+  </nav>
 </header>
 
 <main class="main">
-<section class="header">
-<h1>Eye Image Analysis</h1>
-<p>Welcome{% if name %}, {{ name }}{% endif %}. Upload a retinal image to start screening.</p>
-</section>
+  <div class="header-hero">
+    <div class="badge-pill">Clinical Bilateral Screening</div>
+    <h1>Bilateral Retinal Examination</h1>
+    <p>Upload left and right fundus photos for simultaneous bilateral AI analysis, optic cup asymmetry screening, and Grad-CAM lesion localization.</p>
+  </div>
 
-<section class="screen">
-<div class="upload">
-<strong>Select retinal image</strong><br>
-<input type="file" id="imageInput" accept="image/png,image/jpeg,image/jpg">
-<img id="preview" class="preview" alt="Selected retinal image">
-</div>
+  <!-- Optional Patient Demographics -->
+  <div class="patient-card">
+    <h3>
+      <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"/><circle cx="12" cy="7" r="4"/>
+      </svg>
+      Patient Details (For Clinical Report)
+    </h3>
+    <div class="patient-grid">
+      <div class="form-group">
+        <label>Patient ID / Name</label>
+        <input type="text" id="patientName" placeholder="e.g. John Doe (PT-1042)" value="{% if name %}{{ name }}{% endif %}">
+      </div>
+      <div class="form-group">
+        <label>Age</label>
+        <input type="number" id="patientAge" placeholder="e.g. 58" min="1" max="120">
+      </div>
+      <div class="form-group">
+        <label>Gender</label>
+        <select id="patientGender">
+          <option value="Unspecified">Select Gender</option>
+          <option value="Male">Male</option>
+          <option value="Female">Female</option>
+          <option value="Other">Other</option>
+        </select>
+      </div>
+      <div class="form-group">
+        <label>Diabetic History</label>
+        <select id="patientDiabetes">
+          <option value="Unknown">Unknown / Not Disclosed</option>
+          <option value="Type 2 Diabetes">Type 2 Diabetes</option>
+          <option value="Type 1 Diabetes">Type 1 Diabetes</option>
+          <option value="Non-Diabetic">Non-Diabetic</option>
+        </select>
+      </div>
+    </div>
+  </div>
 
-<div class="analyze-wrap">
-<button class="btn" id="analyzeBtn">Analyze Image</button>
-</div>
+  <!-- Side-by-Side Dual Eye Upload -->
+  <div class="upload-grid">
+    <!-- Left Eye (OS) -->
+    <div class="eye-box">
+      <div class="eye-box-header">
+        <div class="eye-box-title">
+          <span>Left Eye</span>
+          <span class="eye-tag tag-left">OS (Sinister)</span>
+        </div>
+        <span style="font-size: 12px; color: var(--text-muted);" id="leftStatus">Pending file</span>
+      </div>
+      <div class="dropzone" id="dropzoneLeft">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+          <circle cx="9" cy="9" r="2"/>
+          <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+        </svg>
+        <p><strong>Click to upload</strong> or drag & drop</p>
+        <p style="font-size: 12px; margin-top: 4px;">Left eye retinal fundus photo (PNG/JPG)</p>
+        <input type="file" id="inputLeft" class="file-input" accept="image/png,image/jpeg,image/jpg">
+      </div>
+      <div class="preview-container" id="previewLeftContainer">
+        <img id="previewLeft" class="preview-img" alt="Left Eye Preview">
+        <br>
+        <button type="button" class="btn-remove" onclick="removeImage('left')">Remove & Replace</button>
+      </div>
+    </div>
 
-<div class="result" id="result">
-<h2 id="prediction">Prediction</h2>
-<div id="message" class="message"></div>
+    <!-- Right Eye (OD) -->
+    <div class="eye-box">
+      <div class="eye-box-header">
+        <div class="eye-box-title">
+          <span>Right Eye</span>
+          <span class="eye-tag tag-right">OD (Dextrus)</span>
+        </div>
+        <span style="font-size: 12px; color: var(--text-muted);" id="rightStatus">Pending file</span>
+      </div>
+      <div class="dropzone" id="dropzoneRight">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <rect width="18" height="18" x="3" y="3" rx="2" ry="2"/>
+          <circle cx="9" cy="9" r="2"/>
+          <path d="m21 15-3.086-3.086a2 2 0 0 0-2.828 0L6 21"/>
+        </svg>
+        <p><strong>Click to upload</strong> or drag & drop</p>
+        <p style="font-size: 12px; margin-top: 4px;">Right eye retinal fundus photo (PNG/JPG)</p>
+        <input type="file" id="inputRight" class="file-input" accept="image/png,image/jpeg,image/jpg">
+      </div>
+      <div class="preview-container" id="previewRightContainer">
+        <img id="previewRight" class="preview-img" alt="Right Eye Preview">
+        <br>
+        <button type="button" class="btn-remove" onclick="removeImage('right')">Remove & Replace</button>
+      </div>
+    </div>
+  </div>
 
-<div class="row"><div class="rowhead"><span>Normal Retina</span><span id="p0">0%</span></div><div class="track"><div class="fill" id="f0"></div></div></div>
-<div class="row"><div class="rowhead"><span>Cataract</span><span id="p1">0%</span></div><div class="track"><div class="fill" id="f1"></div></div></div>
-<div class="row"><div class="rowhead"><span>Glaucoma</span><span id="p2">0%</span></div><div class="track"><div class="fill" id="f2"></div></div></div>
-<div class="row"><div class="rowhead"><span>Diabetic Retinopathy</span><span id="p3">0%</span></div><div class="track"><div class="fill" id="f3"></div></div></div>
+  <!-- Run Analysis CTA -->
+  <div class="cta-wrapper">
+    <button class="btn btn-scan" id="analyzeBtn" onclick="runBilateralAnalysis()">
+      <svg width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.2" viewBox="0 0 24 24">
+        <path d="M12 2v4m0 12v4M4.93 4.93l2.83 2.83m8.48 8.48 2.83 2.83M2 12h4m12 0h4M4.93 19.07l2.83-2.83m8.48-8.48 2.83-2.83"/>
+      </svg>
+      Run Bilateral AI Examination
+    </button>
+  </div>
 
-<button class="btn report" id="reportBtn">Generate PDF Report</button>
-<p class="note">This is a project screening aid, not a medical diagnosis. Please consult a qualified ophthalmologist for clinical evaluation.</p>
-</div>
-</section>
+  <!-- Results Section -->
+  <div class="results-section" id="resultsSection">
+    <!-- Clinical Triage Banner -->
+    <div class="triage-banner triage-routine" id="triageBanner">
+      <div class="triage-info">
+        <div style="font-size: 12px; font-weight: 800; text-transform: uppercase; margin-bottom: 4px;" id="triageBadge">TRIAGE STATUS: ROUTINE</div>
+        <h2 id="triageDiagnosis">Bilateral Normal Retinae</h2>
+        <p id="triageFindings">Both eyes demonstrate normal retinal architecture with clear optic disc margins.</p>
+      </div>
+      <div>
+        <button class="btn btn-secondary" onclick="document.getElementById('reportCard').scrollIntoView({behavior: 'smooth'})">
+          View PDF Report Options
+        </button>
+      </div>
+    </div>
+
+    <!-- Side-by-side Eye Diagnoses -->
+    <div class="results-grid">
+      <!-- Left Eye Result -->
+      <div class="result-card">
+        <div class="result-title">
+          <span>Left Eye (OS)</span>
+          <span class="diagnosis-pill diag-normal" id="leftDiagBadge">Normal Retina</span>
+        </div>
+        <div class="images-row">
+          <div class="img-panel">
+            <span>Fundus Input</span>
+            <img id="leftImgRaw" src="" alt="Left Fundus">
+          </div>
+          <div class="img-panel">
+            <span>Grad-CAM Attention</span>
+            <img id="leftImgCam" src="" alt="Left Grad-CAM">
+          </div>
+        </div>
+        <div class="prob-bars">
+          <div class="prob-row">
+            <div class="prob-meta"><span>Normal Retina</span><span id="left_p0">0%</span></div>
+            <div class="prob-track"><div class="prob-fill fill-normal" id="left_f0"></div></div>
+          </div>
+          <div class="prob-row">
+            <div class="prob-meta"><span>Cataract</span><span id="left_p1">0%</span></div>
+            <div class="prob-track"><div class="prob-fill fill-cataract" id="left_f1"></div></div>
+          </div>
+          <div class="prob-row">
+            <div class="prob-meta"><span>Glaucoma</span><span id="left_p2">0%</span></div>
+            <div class="prob-track"><div class="prob-fill fill-glaucoma" id="left_f2"></div></div>
+          </div>
+          <div class="prob-row">
+            <div class="prob-meta"><span>Diabetic Retinopathy</span><span id="left_p3">0%</span></div>
+            <div class="prob-track"><div class="prob-fill fill-dr" id="left_f3"></div></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Eye Result -->
+      <div class="result-card">
+        <div class="result-title">
+          <span>Right Eye (OD)</span>
+          <span class="diagnosis-pill diag-normal" id="rightDiagBadge">Normal Retina</span>
+        </div>
+        <div class="images-row">
+          <div class="img-panel">
+            <span>Fundus Input</span>
+            <img id="rightImgRaw" src="" alt="Right Fundus">
+          </div>
+          <div class="img-panel">
+            <span>Grad-CAM Attention</span>
+            <img id="rightImgCam" src="" alt="Right Grad-CAM">
+          </div>
+        </div>
+        <div class="prob-bars">
+          <div class="prob-row">
+            <div class="prob-meta"><span>Normal Retina</span><span id="right_p0">0%</span></div>
+            <div class="prob-track"><div class="prob-fill fill-normal" id="right_f0"></div></div>
+          </div>
+          <div class="prob-row">
+            <div class="prob-meta"><span>Cataract</span><span id="right_p1">0%</span></div>
+            <div class="prob-track"><div class="prob-fill fill-cataract" id="right_f1"></div></div>
+          </div>
+          <div class="prob-row">
+            <div class="prob-meta"><span>Glaucoma</span><span id="right_p2">0%</span></div>
+            <div class="prob-track"><div class="prob-fill fill-glaucoma" id="right_f2"></div></div>
+          </div>
+          <div class="prob-row">
+            <div class="prob-meta"><span>Diabetic Retinopathy</span><span id="right_p3">0%</span></div>
+            <div class="prob-track"><div class="prob-fill fill-dr" id="right_f3"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Official PDF Generation Card -->
+    <div class="report-action-box" id="reportCard">
+      <h3>Official Bilateral Clinical Report</h3>
+      <p>Download a comprehensive ophthalmic screening report incorporating patient demographics, bilateral fundus photographs, Grad-CAM lesion focus, and triage referral instructions.</p>
+      <button class="btn" id="pdfBtn" onclick="generateBilateralPdf()">
+        <svg width="18" height="18" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+          <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4M7 10l5 5 5-5M12 15V3"/>
+        </svg>
+        Download Bilateral PDF Report
+      </button>
+      <p style="font-size: 12px; margin-top: 15px; color: #94a3b8;">
+        Disclaimer: EyeCare AI is a screening assistance system trained on ODIR-5K and does not constitute a certified medical diagnosis. Always consult a licensed ophthalmologist.
+      </p>
+    </div>
+  </div>
 </main>
 
-<footer class="footer">EyeCare AI • ODIR-5K Retinal Image Classification Project</footer>
+<footer class="footer">
+  EyeCare AI • Bilateral Retinal Screening System • High-Accuracy 4-Class Deep Learning
+</footer>
 
 <script>
-const input=document.getElementById('imageInput');
-const preview=document.getElementById('preview');
-const analyze=document.getElementById('analyzeBtn');
-const result=document.getElementById('result');
-const report=document.getElementById('reportBtn');
-let last=null;
-const labels=['Normal Retina','Cataract','Glaucoma','Diabetic Retinopathy'];
+let leftFile = null;
+let rightFile = null;
+let lastAnalysisData = null;
 
-input.addEventListener('change',()=>{
-    if(!input.files[0]) return;
-    preview.src=URL.createObjectURL(input.files[0]);
-    preview.style.display='block';
-    result.style.display='none';
-    report.style.display='none';
-});
+const labels = ['Normal Retina', 'Cataract', 'Glaucoma', 'Diabetic Retinopathy'];
 
-analyze.addEventListener('click',async()=>{
-    if(!input.files[0]){alert('Please select a retinal image first.');return;}
-    analyze.disabled=true;
-    analyze.textContent='Analyzing...';
-    const fd=new FormData();
-    fd.append('image',input.files[0]);
-    try{
-        const res=await fetch('{{ url_for("predict") }}',{method:'POST',body:fd});
-        const data=await res.json();
-        if(!res.ok) throw new Error(data.error||'Prediction failed');
-        last=data;
-        document.getElementById('prediction').textContent=data.label+' — '+data.confidence+'% confidence';
-        document.getElementById('message').textContent=data.message||'Result generated successfully.';
-        labels.forEach((label,i)=>{
-            const value=data.probabilities[label]||0;
-            document.getElementById('p'+i).textContent=value+'%';
-            document.getElementById('f'+i).style.width=value+'%';
-        });
-        result.style.display='block';
-        report.style.display='inline-block';
-    }catch(err){alert(err.message)}
-    finally{analyze.disabled=false;analyze.textContent='Analyze Image'}
-});
+function setupDropzone(zoneId, inputId, previewId, containerId, statusId, eye) {
+  const zone = document.getElementById(zoneId);
+  const input = document.getElementById(inputId);
+  const preview = document.getElementById(previewId);
+  const container = document.getElementById(containerId);
+  const status = document.getElementById(statusId);
 
-report.addEventListener('click',async()=>{
-    if(!last)return;
-    report.disabled=true;
-    report.textContent='Generating...';
-    try{
-        const res=await fetch('{{ url_for("generate_report") }}',{
-            method:'POST',
-            headers:{'Content-Type':'application/json'},
-            body:JSON.stringify({label:last.label,confidence:last.confidence,probabilities:last.probabilities,filename:last.filename||input.files[0].name})
-        });
-        if(!res.ok){const data=await res.json();throw new Error(data.error||'Could not generate report')}
-        const blob=await res.blob();
-        const url=URL.createObjectURL(blob);
-        const a=document.createElement('a');
-        a.href=url;
-        a.download='EyeCare_AI_Report.pdf';
-        document.body.appendChild(a);
-        a.click();
-        a.remove();
-        URL.revokeObjectURL(url);
-    }catch(err){alert(err.message)}
-    finally{report.disabled=false;report.textContent='Generate PDF Report'}
-});
+  zone.addEventListener('click', () => input.click());
+
+  zone.addEventListener('dragover', (e) => {
+    e.preventDefault();
+    zone.classList.add('dragover');
+  });
+
+  zone.addEventListener('dragleave', () => zone.classList.remove('dragover'));
+
+  zone.addEventListener('drop', (e) => {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+      handleFile(e.dataTransfer.files[0], eye);
+    }
+  });
+
+  input.addEventListener('change', () => {
+    if (input.files && input.files[0]) {
+      handleFile(input.files[0], eye);
+    }
+  });
+}
+
+function handleFile(file, eye) {
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    if (eye === 'left') {
+      leftFile = file;
+      document.getElementById('previewLeft').src = e.target.result;
+      document.getElementById('previewLeftContainer').style.display = 'block';
+      document.getElementById('dropzoneLeft').style.display = 'none';
+      document.getElementById('leftStatus').textContent = file.name;
+    } else {
+      rightFile = file;
+      document.getElementById('previewRight').src = e.target.result;
+      document.getElementById('previewRightContainer').style.display = 'block';
+      document.getElementById('dropzoneRight').style.display = 'none';
+      document.getElementById('rightStatus').textContent = file.name;
+    }
+  };
+  reader.readAsDataURL(file);
+}
+
+function removeImage(eye) {
+  if (eye === 'left') {
+    leftFile = null;
+    document.getElementById('inputLeft').value = '';
+    document.getElementById('previewLeftContainer').style.display = 'none';
+    document.getElementById('dropzoneLeft').style.display = 'flex';
+    document.getElementById('leftStatus').textContent = 'Pending file';
+  } else {
+    rightFile = null;
+    document.getElementById('inputRight').value = '';
+    document.getElementById('previewRightContainer').style.display = 'none';
+    document.getElementById('dropzoneRight').style.display = 'flex';
+    document.getElementById('rightStatus').textContent = 'Pending file';
+  }
+}
+
+setupDropzone('dropzoneLeft', 'inputLeft', 'previewLeft', 'previewLeftContainer', 'leftStatus', 'left');
+setupDropzone('dropzoneRight', 'inputRight', 'previewRight', 'previewRightContainer', 'rightStatus', 'right');
+
+async function runBilateralAnalysis() {
+  if (!leftFile && !rightFile) {
+    alert('Please upload at least one eye retinal image (preferably both Left and Right).');
+    return;
+  }
+
+  const btn = document.getElementById('analyzeBtn');
+  btn.disabled = true;
+  btn.innerHTML = `<span style="display:inline-block;animation:spin 1s linear infinite;">⏳</span> Running Bilateral Analysis...`;
+
+  const fd = new FormData();
+  if (leftFile) fd.append('left_image', leftFile);
+  if (rightFile) fd.append('right_image', rightFile);
+  fd.append('patient_name', document.getElementById('patientName').value.trim());
+  fd.append('patient_age', document.getElementById('patientAge').value.trim());
+  fd.append('patient_gender', document.getElementById('patientGender').value);
+  fd.append('patient_diabetes', document.getElementById('patientDiabetes').value);
+
+  try {
+    const res = await fetch('/predict_bilateral', { method: 'POST', body: fd });
+    const data = await res.json();
+    if (!res.ok) throw new Error(data.error || 'Examination failed');
+
+    lastAnalysisData = data;
+    renderResults(data);
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    btn.disabled = false;
+    btn.innerHTML = `Run Bilateral AI Examination`;
+  }
+}
+
+function getDiagClass(label) {
+  const l = (label || '').toLowerCase();
+  if (l.includes('normal')) return 'diag-normal';
+  if (l.includes('cataract')) return 'diag-cataract';
+  if (l.includes('glaucoma')) return 'diag-glaucoma';
+  return 'diag-dr';
+}
+
+function renderResults(data) {
+  const banner = document.getElementById('triageBanner');
+  banner.className = 'triage-banner';
+  if (data.urgency.toLowerCase().includes('urgent') || data.urgency.toLowerCase().includes('high')) {
+    banner.classList.add('triage-urgent');
+  } else if (data.urgency.toLowerCase().includes('moderate')) {
+    banner.classList.add('triage-moderate');
+  } else {
+    banner.classList.add('triage-routine');
+  }
+
+  document.getElementById('triageBadge').textContent = `TRIAGE STATUS: ${data.urgency.toUpperCase()}`;
+  document.getElementById('triageDiagnosis').textContent = data.synthesis_title;
+  document.getElementById('triageFindings').textContent = `${data.findings} Recommendation: ${data.recommendation}`;
+
+  // Populate Left Eye
+  const left = data.left;
+  document.getElementById('leftDiagBadge').textContent = `${left.label} (${left.confidence}%)`;
+  document.getElementById('leftDiagBadge').className = 'diagnosis-pill ' + getDiagClass(left.label);
+  document.getElementById('leftImgRaw').src = left.image_url;
+  document.getElementById('leftImgCam').src = left.cam_url || left.image_url;
+  labels.forEach((lbl, i) => {
+    const val = left.probabilities[lbl] || 0;
+    document.getElementById(`left_p${i}`).textContent = `${val}%`;
+    document.getElementById(`left_f${i}`).style.width = `${val}%`;
+  });
+
+  // Populate Right Eye
+  const right = data.right;
+  document.getElementById('rightDiagBadge').textContent = `${right.label} (${right.confidence}%)`;
+  document.getElementById('rightDiagBadge').className = 'diagnosis-pill ' + getDiagClass(right.label);
+  document.getElementById('rightImgRaw').src = right.image_url;
+  document.getElementById('rightImgCam').src = right.cam_url || right.image_url;
+  labels.forEach((lbl, i) => {
+    const val = right.probabilities[lbl] || 0;
+    document.getElementById(`right_p${i}`).textContent = `${val}%`;
+    document.getElementById(`right_f${i}`).style.width = `${val}%`;
+  });
+
+  document.getElementById('resultsSection').style.display = 'block';
+  document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+}
+
+async function generateBilateralPdf() {
+  if (!lastAnalysisData) return;
+  const btn = document.getElementById('pdfBtn');
+  btn.disabled = true;
+  btn.textContent = 'Generating PDF...';
+
+  try {
+    const payload = {
+      ...lastAnalysisData,
+      patient_name: document.getElementById('patientName').value.trim() || 'Patient',
+      patient_age: document.getElementById('patientAge').value.trim() || 'N/A',
+      patient_gender: document.getElementById('patientGender').value,
+      patient_diabetes: document.getElementById('patientDiabetes').value,
+    };
+
+    const res = await fetch('/generate_bilateral_report', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(payload)
+    });
+    if (!res.ok) {
+      const err = await res.json();
+      throw new Error(err.error || 'Failed to generate PDF');
+    }
+
+    const blob = await res.blob();
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `EyeCare_Bilateral_Report_${Date.now()}.pdf`;
+    document.body.appendChild(a);
+    a.click();
+    a.remove();
+    URL.revokeObjectURL(url);
+  } catch (err) {
+    alert(err.message);
+  } finally {
+    btn.disabled = false;
+    btn.textContent = 'Download Bilateral PDF Report';
+  }
+}
 </script>
+
 </body>
 </html>

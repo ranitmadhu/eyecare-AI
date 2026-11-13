@@ -1,0 +1,279 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Screening History | EyeCare AI</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #eff6ff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --bg-app: #f8fafc;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --radius: 12px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background: var(--bg-app);
+  color: var(--text-main);
+  line-height: 1.5;
+}
+.nav {
+  height: 72px;
+  background: #ffffff;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 6%;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--primary);
+  text-decoration: none;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.nav-links {
+  display: flex;
+  align-items: center;
+  gap: 20px;
+}
+.nav-links a {
+  color: var(--text-muted);
+  font-weight: 600;
+  text-decoration: none;
+  font-size: 14px;
+}
+.nav-links a:hover { color: var(--text-main); }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 9px;
+  padding: 10px 18px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 13px;
+  cursor: pointer;
+  text-decoration: none;
+}
+.btn:hover { background: var(--primary-dark); }
+.main {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 40px 20px 80px;
+}
+.page-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 30px;
+  flex-wrap: wrap;
+  gap: 16px;
+}
+.page-header h1 {
+  font-size: 28px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+.page-header p {
+  color: var(--text-muted);
+  font-size: 15px;
+}
+.history-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  overflow: hidden;
+  box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+}
+.table-wrap {
+  overflow-x: auto;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  text-align: left;
+}
+th {
+  background: #f1f5f9;
+  padding: 14px 18px;
+  font-size: 12px;
+  font-weight: 700;
+  color: var(--text-muted);
+  text-transform: uppercase;
+  border-bottom: 1px solid var(--border);
+}
+td {
+  padding: 16px 18px;
+  border-bottom: 1px solid var(--border);
+  font-size: 14px;
+  vertical-align: middle;
+}
+tr:hover td {
+  background: #f8fafc;
+}
+.badge {
+  display: inline-block;
+  padding: 4px 10px;
+  border-radius: 6px;
+  font-size: 11px;
+  font-weight: 800;
+  text-transform: uppercase;
+}
+.badge-urgent { background: #fee2e2; color: #991b1b; }
+.badge-moderate { background: #fef3c7; color: #92400e; }
+.badge-routine { background: #dcfce7; color: #166534; }
+.diag-pill {
+  display: inline-block;
+  padding: 3px 8px;
+  border-radius: 6px;
+  font-size: 12px;
+  font-weight: 600;
+  background: #f1f5f9;
+  color: #334155;
+}
+.empty-state {
+  text-align: center;
+  padding: 60px 20px;
+  color: var(--text-muted);
+}
+.empty-state svg {
+  width: 48px;
+  height: 48px;
+  color: #94a3b8;
+  margin-bottom: 12px;
+}
+.footer {
+  text-align: center;
+  padding: 30px;
+  color: var(--text-muted);
+  font-size: 13px;
+  border-top: 1px solid var(--border);
+  background: #ffffff;
+}
+</style>
+</head>
+<body>
+
+<header class="nav">
+  <a href="{{ url_for('home') }}" class="logo">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2">
+      <path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/>
+      <circle cx="12" cy="12" r="3"/>
+    </svg>
+    EyeCare AI
+  </a>
+  <nav class="nav-links">
+    <a href="{{ url_for('home') }}">Home</a>
+    <a href="{{ url_for('analysis') }}">New Screening</a>
+    <a href="{{ url_for('logout') }}">Sign Out</a>
+  </nav>
+</header>
+
+<main class="main">
+  <div class="page-header">
+    <div>
+      <h1>Screening Examination Records</h1>
+      <p>Permanent patient records stored in local SQLite database (`eyecare.db`).</p>
+    </div>
+    <a href="{{ url_for('analysis') }}" class="btn">
+      <svg width="16" height="16" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24">
+        <path d="M12 5v14M5 12h14"/>
+      </svg>
+      Start New Screening
+    </a>
+  </div>
+
+  <div class="history-card">
+    <div class="table-wrap">
+      {% if screenings and screenings|length > 0 %}
+      <table>
+        <thead>
+          <tr>
+            <th>Date & Time</th>
+            <th>Patient Details</th>
+            <th>Left Eye (OS)</th>
+            <th>Right Eye (OD)</th>
+            <th>Synthesis & Triage</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody>
+          {% for s in screenings %}
+          <tr>
+            <td>
+              <strong>{{ s.created_at[:16] if s.created_at else 'Recent' }}</strong>
+            </td>
+            <td>
+              <strong>{{ s.patient_name }}</strong><br>
+              <span style="font-size: 12px; color: var(--text-muted);">
+                Age: {{ s.patient_age }} | {{ s.patient_gender }}
+              </span>
+            </td>
+            <td>
+              <span class="diag-pill">{{ s.left_label }} ({{ s.left_confidence }}%)</span>
+            </td>
+            <td>
+              <span class="diag-pill">{{ s.right_label }} ({{ s.right_confidence }}%)</span>
+            </td>
+            <td>
+              {% if 'urgent' in s.urgency|lower or 'high' in s.urgency|lower %}
+                <span class="badge badge-urgent">{{ s.urgency }}</span>
+              {% elif 'moderate' in s.urgency|lower %}
+                <span class="badge badge-moderate">{{ s.urgency }}</span>
+              {% else %}
+                <span class="badge badge-routine">{{ s.urgency }}</span>
+              {% endif %}
+              <div style="font-size: 12px; margin-top: 4px; color: var(--text-main);">
+                {{ s.synthesis_title }}
+              </div>
+            </td>
+            <td>
+              <a href="{{ url_for('analysis') }}" class="btn" style="padding: 6px 12px; font-size: 11px;">
+                Review
+              </a>
+            </td>
+          </tr>
+          {% endfor %}
+        </tbody>
+      </table>
+      {% else %}
+      <div class="empty-state">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8">
+          <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/>
+          <path d="M14 2v6h6M16 13H8M16 17H8M10 9H8"/>
+        </svg>
+        <h3>No Screening Records Found</h3>
+        <p style="margin-top: 6px; font-size: 14px;">You haven't conducted any bilateral examinations yet.</p>
+        <div style="margin-top: 18px;">
+          <a href="{{ url_for('analysis') }}" class="btn">Run First Examination</a>
+        </div>
+      </div>
+      {% endif %}
+    </div>
+  </div>
+</main>
+
+<footer class="footer">
+  EyeCare AI • Secure SQLite Patient Database • Persistent Electronic Health Screening Records
+</footer>
+
+</body>
+</html>
