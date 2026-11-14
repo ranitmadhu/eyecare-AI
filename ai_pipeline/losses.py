@@ -7,10 +7,16 @@ preventing precision collapse and restoring balanced recall.
 """
 
 import tensorflow as tf
-from tensorflow import keras
+try:
+    import keras
+    from keras import saving as keras_saving
+    register_serializable = keras_saving.register_keras_serializable
+except (ImportError, AttributeError):
+    from tensorflow import keras
+    register_serializable = getattr(getattr(keras, "saving", None), "register_keras_serializable", lambda **kw: (lambda c: c))
 
 
-@keras.saving.register_keras_serializable(package="RetinalClassifier")
+@register_serializable(package="RetinalClassifier")
 class CategoricalFocalLoss(keras.losses.Loss):
     def __init__(
         self,

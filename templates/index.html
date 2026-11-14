@@ -3,25 +3,342 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<meta name="description" content="EyeCare AI retinal image screening project using four ODIR-5K classes.">
-<title>EyeCare AI | Retinal Screening</title>
+<meta name="description" content="EyeCare AI Bilateral Retinal Screening System using deep learning for four ophthalmic classes.">
+<title>EyeCare AI | Bilateral Retinal Screening</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
 <style>
-*{box-sizing:border-box}body{margin:0;font-family:Arial,sans-serif;background:#f6f8fc;color:#172033}a{text-decoration:none}.nav{height:70px;background:#fff;border-bottom:1px solid #e4e8ef;display:flex;align-items:center;justify-content:space-between;padding:0 7%;position:sticky;top:0;z-index:10}.logo{font-size:24px;font-weight:700;color:#25438f}.links{display:flex;align-items:center;gap:22px}.links a{color:#38445a}.btn{display:inline-block;border:0;border-radius:9px;padding:13px 22px;background:#3156c9;color:#fff;font-weight:700;cursor:pointer}.btn.secondary{background:#eef2ff;color:#3156c9}.hero{min-height:560px;display:flex;align-items:center;text-align:center;padding:75px 20px;background:linear-gradient(135deg,#edf3ff,#fff)}.hero-inner{max-width:850px;margin:auto}.tag{font-size:13px;font-weight:700;letter-spacing:1.5px;color:#3156c9}.hero h1{font-size:52px;line-height:1.1;margin:18px 0}.hero p{max-width:680px;margin:0 auto 30px;color:#5e6a7e;font-size:18px;line-height:1.6}.section{padding:70px 7%}.section h2{text-align:center;font-size:34px;margin:0 0 10px}.sub{text-align:center;color:#697487;margin:0 auto 40px}.cards{display:grid;grid-template-columns:repeat(4,1fr);gap:18px;max-width:1050px;margin:auto}.card{background:#fff;border:1px solid #e2e7ef;border-radius:15px;padding:25px;text-align:center;box-shadow:0 5px 20px rgba(30,50,90,.04)}.number{font-size:13px;color:#3156c9;font-weight:700}.screen{max-width:900px;margin:auto;background:#fff;border:1px solid #e1e6ee;border-radius:18px;padding:35px;box-shadow:0 8px 30px rgba(30,50,90,.06)}.upload{border:2px dashed #bbc4d3;border-radius:13px;padding:35px;text-align:center}.upload input{margin-top:18px}.preview{display:none;max-width:280px;max-height:230px;margin:20px auto 0;border-radius:10px}.result{display:none;margin-top:25px;padding:25px;border-radius:13px;background:#f5f7fb}.result h3{margin-top:0}.row{margin:14px 0}.rowhead{display:flex;justify-content:space-between;font-size:14px;margin-bottom:6px}.track{height:10px;background:#dfe4ed;border-radius:20px;overflow:hidden}.fill{height:100%;width:0;background:#3156c9}.message{margin:18px 0;padding:12px;border-radius:8px;background:#fff4d8;color:#705600;font-size:14px}.report{display:none;margin-top:18px}.note{text-align:center;color:#777;font-size:13px;margin-top:22px;line-height:1.5}.welcome{text-align:center;margin-bottom:25px}.footer{text-align:center;padding:32px;background:#172033;color:#fff}@media(max-width:800px){.cards{grid-template-columns:1fr 1fr}.links a:not(.btn){display:none}.hero h1{font-size:40px}}@media(max-width:500px){.cards{grid-template-columns:1fr}.section{padding:50px 5%}.screen{padding:20px}}
+:root {
+  --primary: #2563eb;
+  --primary-dark: #1d4ed8;
+  --primary-light: #eff6ff;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --bg-app: #f8fafc;
+  --card-bg: #ffffff;
+  --border: #e2e8f0;
+  --radius: 14px;
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  margin: 0;
+  font-family: 'Plus Jakarta Sans', system-ui, -apple-system, sans-serif;
+  background: var(--bg-app);
+  color: var(--text-main);
+  line-height: 1.5;
+}
+a { text-decoration: none; }
+.nav {
+  height: 72px;
+  background: #fff;
+  border-bottom: 1px solid var(--border);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 7%;
+  position: sticky;
+  top: 0;
+  z-index: 100;
+}
+.logo {
+  font-size: 22px;
+  font-weight: 800;
+  color: var(--primary);
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.links {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+}
+.links a {
+  color: var(--text-muted);
+  font-weight: 600;
+  font-size: 14px;
+  transition: color 0.2s;
+}
+.links a:hover { color: var(--text-main); }
+.btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  border: 0;
+  border-radius: 10px;
+  padding: 12px 24px;
+  background: var(--primary);
+  color: #fff;
+  font-weight: 700;
+  font-size: 14px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+.btn:hover { background: var(--primary-dark); transform: translateY(-1px); }
+.btn.secondary { background: #f1f5f9; color: var(--text-main); }
+.btn.secondary:hover { background: #e2e8f0; }
+
+.hero {
+  min-height: 520px;
+  display: flex;
+  align-items: center;
+  text-align: center;
+  padding: 70px 20px;
+  background: linear-gradient(180deg, #eff6ff 0%, #ffffff 100%);
+  border-bottom: 1px solid var(--border);
+}
+.hero-inner {
+  max-width: 860px;
+  margin: auto;
+}
+.tag {
+  display: inline-block;
+  padding: 6px 14px;
+  background: #dbeafe;
+  color: var(--primary);
+  border-radius: 9999px;
+  font-size: 12px;
+  font-weight: 800;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  margin-bottom: 18px;
+}
+.hero h1 {
+  font-size: 48px;
+  line-height: 1.15;
+  margin-bottom: 18px;
+  font-weight: 800;
+  color: var(--text-main);
+}
+.hero p {
+  max-width: 680px;
+  margin: 0 auto 32px;
+  color: var(--text-muted);
+  font-size: 17px;
+  line-height: 1.6;
+}
+.hero-actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+  flex-wrap: wrap;
+}
+
+.section {
+  padding: 70px 7%;
+  max-width: 1200px;
+  margin: auto;
+}
+.section h2 {
+  text-align: center;
+  font-size: 32px;
+  font-weight: 800;
+  margin-bottom: 8px;
+}
+.sub {
+  text-align: center;
+  color: var(--text-muted);
+  font-size: 15px;
+  margin-bottom: 45px;
+}
+.cards {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 20px;
+}
+.card {
+  background: #fff;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  padding: 26px 20px;
+  text-align: center;
+  box-shadow: 0 4px 15px rgba(0,0,0,0.02);
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+.card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 8px 25px rgba(0,0,0,0.05);
+}
+.number {
+  font-size: 12px;
+  color: var(--primary);
+  font-weight: 800;
+  letter-spacing: 1px;
+  margin-bottom: 10px;
+}
+.card h3 {
+  font-size: 17px;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+.card p {
+  font-size: 13px;
+  color: var(--text-muted);
+  line-height: 1.5;
+}
+
+.banner {
+  background: var(--primary);
+  color: #fff;
+  border-radius: 18px;
+  padding: 45px 30px;
+  text-align: center;
+  margin-top: 40px;
+}
+.banner h3 {
+  font-size: 26px;
+  font-weight: 800;
+  margin-bottom: 12px;
+}
+.banner p {
+  font-size: 15px;
+  opacity: 0.9;
+  max-width: 600px;
+  margin: 0 auto 24px;
+}
+.btn-white {
+  background: #fff;
+  color: var(--primary);
+  font-weight: 800;
+}
+.btn-white:hover {
+  background: #f8fafc;
+  color: var(--primary-dark);
+}
+
+.footer {
+  text-align: center;
+  padding: 35px 20px;
+  background: #0f172a;
+  color: #94a3b8;
+  font-size: 13px;
+}
+@media (max-width: 860px) {
+  .cards { grid-template-columns: 1fr 1fr; }
+  .hero h1 { font-size: 36px; }
+  .links a:not(.btn) { display: none; }
+}
+@media (max-width: 500px) {
+  .cards { grid-template-columns: 1fr; }
+  .section { padding: 45px 20px; }
+}
 </style>
 </head>
 <body>
-<header class="nav"><a href="/" class="logo">◉ EyeCare AI</a><nav class="links"><a href="#home">Home</a><a href="#how">How it works</a><a href="#conditions">Conditions</a>{% if logged_in %}<a href="{{ url_for('history') }}">History</a><a href="{{ url_for('logout') }}">Logout</a>{% else %}<a href="{{ url_for('login') }}">Log in</a>{% endif %}<a class="btn" href="{% if logged_in %}#screening{% else %}{{ url_for('login') }}{% endif %}">{% if logged_in %}Start Screening{% else %}Get Started{% endif %}</a></nav></header>
+
+<header class="nav">
+  <a href="/" class="logo">◉ EyeCare AI</a>
+  <nav class="links">
+    <a href="#how">How It Works</a>
+    <a href="#conditions">Conditions</a>
+    {% if logged_in %}
+      <a href="{{ url_for('analysis') }}">Bilateral Screening</a>
+      <a href="{{ url_for('history') }}">History</a>
+      <a href="{{ url_for('logout') }}">Logout</a>
+      <a class="btn" href="{{ url_for('analysis') }}">Go to Screening</a>
+    {% else %}
+      <a href="{{ url_for('login') }}">Log in</a>
+      <a class="btn" href="{{ url_for('login') }}">Get Started</a>
+    {% endif %}
+  </nav>
+</header>
+
 <main>
-<section class="hero" id="home"><div class="hero-inner"><div class="tag">AI-BASED RETINAL SCREENING</div><h1>EyeCare AI makes retinal screening simple.</h1><p>Upload a retinal image and view a clear screening result across four project classes: Normal Retina, Cataract, Glaucoma, and Diabetic Retinopathy.</p><a class="btn" href="{% if logged_in %}#screening{% else %}{{ url_for('login') }}{% endif %}">{% if logged_in %}Start Screening{% else %}Get Started{% endif %}</a></div></section>
-<section class="section" id="how"><h2>How it works</h2><p class="sub">A simple four-step user journey</p><div class="cards"><div class="card"><div class="number">STEP 01</div><h3>Login / Register</h3><p>Create an account or sign in before screening.</p></div><div class="card"><div class="number">STEP 02</div><h3>Upload Image</h3><p>Select a JPG, JPEG, or PNG retinal image.</p></div><div class="card"><div class="number">STEP 03</div><h3>Analyze</h3><p>Click Analyze Image and view the result.</p></div><div class="card"><div class="number">STEP 04</div><h3>PDF Report</h3><p>Generate a PDF report from the screening result.</p></div></div></section>
-<section class="section" id="conditions"><h2>Project Classes</h2><p class="sub">The current EyeCare AI project uses four classes</p><div class="cards"><div class="card"><h3>Normal Retina</h3></div><div class="card"><h3>Cataract</h3></div><div class="card"><h3>Glaucoma</h3></div><div class="card"><h3>Diabetic Retinopathy</h3></div></div></section>
-{% if logged_in %}
-<section class="section" id="screening"><div class="welcome"><h2>Welcome{% if name %}, {{ name }}{% endif %}</h2><p class="sub">Upload a retinal image to start screening.</p></div><div class="screen"><div class="upload"><strong>Select retinal image</strong><br><input type="file" id="imageInput" accept="image/png,image/jpeg,image/jpg"><img id="preview" class="preview" alt="Selected retinal image"></div><br><button class="btn" id="analyzeBtn">Analyze Image</button><div class="result" id="result"><h3 id="prediction">Prediction</h3><div id="message" class="message"></div><div class="row"><div class="rowhead"><span>Normal Retina</span><span id="p0">0%</span></div><div class="track"><div class="fill" id="f0"></div></div></div><div class="row"><div class="rowhead"><span>Cataract</span><span id="p1">0%</span></div><div class="track"><div class="fill" id="f1"></div></div></div><div class="row"><div class="rowhead"><span>Glaucoma</span><span id="p2">0%</span></div><div class="track"><div class="fill" id="f2"></div></div></div><div class="row"><div class="rowhead"><span>Diabetic Retinopathy</span><span id="p3">0%</span></div><div class="track"><div class="fill" id="f3"></div></div></div><button class="btn report" id="reportBtn">Generate PDF Report</button><p class="note">This is a project screening aid, not a medical diagnosis. Please consult a qualified ophthalmologist for clinical evaluation.</p></div></div></section>
-{% endif %}
-</main><footer class="footer">EyeCare AI • ODIR-5K Retinal Image Classification Project</footer>
-<script>
-const input=document.getElementById('imageInput');
-if(input){const preview=document.getElementById('preview'),analyze=document.getElementById('analyzeBtn'),result=document.getElementById('result'),report=document.getElementById('reportBtn');let last=null;const labels=['Normal Retina','Cataract','Glaucoma','Diabetic Retinopathy'];input.addEventListener('change',()=>{if(!input.files[0])return;preview.src=URL.createObjectURL(input.files[0]);preview.style.display='block';result.style.display='none';report.style.display='none'});analyze.addEventListener('click',async()=>{if(!input.files[0]){alert('Please select a retinal image first.');return}analyze.disabled=true;analyze.textContent='Analyzing...';const fd=new FormData();fd.append('image',input.files[0]);try{const res=await fetch('/predict',{method:'POST',body:fd});const data=await res.json();if(!res.ok)throw new Error(data.error||'Prediction failed');last=data;document.getElementById('prediction').textContent=data.label+' — '+data.confidence+'% confidence';document.getElementById('message').textContent=data.message||'Result generated successfully.';labels.forEach((label,i)=>{const value=data.probabilities[label]||0;document.getElementById('p'+i).textContent=value+'%';document.getElementById('f'+i).style.width=value+'%'});result.style.display='block';report.style.display='inline-block'}catch(err){alert(err.message)}finally{analyze.disabled=false;analyze.textContent='Analyze Image'}});report.addEventListener('click',async()=>{if(!last)return;report.disabled=true;report.textContent='Generating...';try{const res=await fetch('/generate_report',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({label:last.label,confidence:last.confidence,probabilities:last.probabilities,filename:last.filename||input.files[0].name})});if(!res.ok){const data=await res.json();throw new Error(data.error||'Could not generate report')}const blob=await res.blob();const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='EyeCare_AI_Report.pdf';document.body.appendChild(a);a.click();a.remove();URL.revokeObjectURL(url)}catch(err){alert(err.message)}finally{report.disabled=false;report.textContent='Generate PDF Report'}})}
-</script>
+  <!-- Hero Section -->
+  <section class="hero" id="home">
+    <div class="hero-inner">
+      <div class="tag">AI-Powered Bilateral Ophthalmology</div>
+      <h1>Intelligent Dual-Eye Retinal Disease Screening</h1>
+      <p>
+        Upload fundus photographs for both eyes (Left OS & Right OD) for synchronized binocular classification, 
+        explainable Grad-CAM lesion localization, and automated clinical triage.
+      </p>
+      <div class="hero-actions">
+        {% if logged_in %}
+          <a class="btn" href="{{ url_for('analysis') }}">Start Bilateral Screening →</a>
+          <a class="btn secondary" href="{{ url_for('history') }}">View Patient History</a>
+        {% else %}
+          <a class="btn" href="{{ url_for('login') }}">Get Started Now →</a>
+          <a class="btn secondary" href="{{ url_for('register') }}">Create Account</a>
+        {% endif %}
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works Section -->
+  <section class="section" id="how">
+    <h2>Clinical Workflow</h2>
+    <p class="sub">Structured 4-step ophthalmic evaluation pipeline</p>
+    <div class="cards">
+      <div class="card">
+        <div class="number">STEP 01</div>
+        <h3>Authenticate</h3>
+        <p>Sign in to your clinician or technician account to record patient screening sessions.</p>
+      </div>
+      <div class="card">
+        <div class="number">STEP 02</div>
+        <h3>Bilateral Upload</h3>
+        <p>Upload Left (OS) and Right (OD) fundus photographs simultaneously with metadata.</p>
+      </div>
+      <div class="card">
+        <div class="number">STEP 03</div>
+        <h3>Deep Learning AI</h3>
+        <p>EfficientNetV2 runs 4-fold test-time augmentation and generates Grad-CAM attention heatmaps.</p>
+      </div>
+      <div class="card">
+        <div class="number">STEP 04</div>
+        <h3>Clinical PDF Report</h3>
+        <p>Download a comprehensive A4 diagnostic report with urgency grading and dual visual maps.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Project Classes Section -->
+  <section class="section" id="conditions">
+    <h2>Target Retinal Pathologies</h2>
+    <p class="sub">Trained across multi-condition fundus datasets (ODIR-5K standards)</p>
+    <div class="cards">
+      <div class="card">
+        <div class="number">PHYSIOLOGICAL</div>
+        <h3>Normal Retina</h3>
+        <p>Healthy vasculature, physiological optic disc, and intact foveal reflex.</p>
+      </div>
+      <div class="card">
+        <div class="number">PATHOLOGY</div>
+        <h3>Cataract</h3>
+        <p>Crystalline lens opacity obscuring fundus visibility and details.</p>
+      </div>
+      <div class="card">
+        <div class="number">NEUROPATHY</div>
+        <h3>Glaucoma</h3>
+        <p>Optic nerve rim thinning, increased cup-to-disc ratio, and neuroretinal loss.</p>
+      </div>
+      <div class="card">
+        <div class="number">MICROVASCULAR</div>
+        <h3>Diabetic Retinopathy</h3>
+        <p>Retinal microaneurysms, blot hemorrhages, hard exudates, and macular edema.</p>
+      </div>
+    </div>
+
+    <!-- Call to action banner -->
+    <div class="banner">
+      <h3>Ready to run a patient screening?</h3>
+      <p>Access the bilateral examination workspace to upload images and generate explainable AI reports.</p>
+      {% if logged_in %}
+        <a class="btn btn-white" href="{{ url_for('analysis') }}">Open Bilateral Workspace →</a>
+      {% else %}
+        <a class="btn btn-white" href="{{ url_for('login') }}">Sign In to Begin →</a>
+      {% endif %}
+    </div>
+  </section>
+</main>
+
+<footer class="footer">
+  EyeCare AI • High-Accuracy Bilateral Retinal Screening System • Developed with FastAPI & TensorFlow
+</footer>
+
 </body>
 </html>

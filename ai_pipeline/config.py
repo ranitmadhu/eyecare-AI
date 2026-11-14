@@ -6,6 +6,8 @@ from dataclasses import dataclass
 from typing import Tuple, List
 import os
 
+BASE_DIR = os.path.dirname(os.path.abspath(__file__))
+
 
 @dataclass
 class PipelineConfig:
@@ -45,10 +47,10 @@ class PipelineConfig:
     finetune_lr: float = 3e-5
     weight_decay: float = 1e-4
 
-    # Output Directories
-    checkpoint_dir: str = "checkpoints"
-    output_dir: str = "outputs"
-    final_model_name: str = "retinal_binocular_pipeline.keras"
+    # Output Directories (absolute paths referencing ai_pipeline)
+    checkpoint_dir: str = os.path.join(BASE_DIR, "checkpoints")
+    output_dir: str = os.path.join(BASE_DIR, "outputs")
+    final_model_name: str = "retinal_4class_improved.keras"
 
     def __post_init__(self):
         os.makedirs(self.checkpoint_dir, exist_ok=True)

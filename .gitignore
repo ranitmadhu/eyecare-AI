@@ -21,3 +21,6 @@ outputs/*
 !outputs/.gitkeep
 instance/
 .pytest_cache/
+
+# Backup files
+*.bak

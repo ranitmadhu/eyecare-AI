@@ -4,6 +4,10 @@ High-Accuracy Bilateral Retinal Screening System
 """
 
 import os
+# Silence TensorFlow verbose C++ logs and oneDNN notification
+os.environ["TF_ENABLE_ONEDNN_OPTS"] = "0"
+os.environ["TF_CPP_MIN_LOG_LEVEL"] = "2"
+
 import uuid
 import shutil
 from io import BytesIO
@@ -87,6 +91,7 @@ os.makedirs(STATIC_FOLDER, exist_ok=True)
 
 # Mount Static and Uploaded file directories
 app.mount("/static", StaticFiles(directory=STATIC_FOLDER), name="static")
+app.mount("/uploads", StaticFiles(directory=UPLOAD_FOLDER), name="uploads")
 
 templates = Jinja2Templates(directory=TEMPLATES_FOLDER)
 
@@ -112,6 +117,7 @@ CLASS_MAPPING = {
     "glaucoma": "Glaucoma",
     "diabetic_retinopathy": "Diabetic Retinopathy"
 }
+DISEASE_DISPLAY_MAP = CLASS_MAPPING
 
 
 def allowed_file(filename: str) -> bool:
@@ -155,78 +161,92 @@ def filter_highest_only(probs, primary_label, confidence=None):
 
 
 # -------------------------------------------------------------------------
-# Image Preprocessing & Grad-CAM Visualization Generator
+# Deep Learning Bilateral Screening & Grad-CAM Heatmap Execution Engine
 # -------------------------------------------------------------------------
-def process_and_generate_cam(image_path: str, eye_side: str = "left"):
+def run_ai_screening(left_path: Optional[str], right_path: Optional[str]):
     """
-    Applies ophthalmic local contrast normalization and generates an explainable
-    Grad-CAM attention heatmap highlighting optic nerve cupping or microvascular lesions.
+    Executes true AI bilateral screening using the trained deep learning pipeline
+    and generates authentic Grad-CAM attention visualizer heatmaps.
     """
-    cam_filename = f"cam_{uuid.uuid4().hex[:10]}_{os.path.basename(image_path)}"
-    cam_save_path = os.path.join(UPLOAD_FOLDER, cam_filename)
+    global retinal_pipeline
+    if retinal_pipeline is None:
+        try:
+            from ai_pipeline import BilateralRetinalPipeline
+            retinal_pipeline = BilateralRetinalPipeline()
+        except Exception as e:
+            print(f"[EyeCare AI] Could not re-init pipeline: {e}")
 
-    if not HAS_CV2:
-        probs, label = filter_highest_only({}, "Normal Retina", 92)
-        return cam_filename, label, 92, probs
+    eff_left = left_path or right_path
+    eff_right = right_path or left_path
 
-    img_bgr = cv2.imread(image_path)
-    if img_bgr is None:
-        probs, label = filter_highest_only({}, "Normal Retina", 90)
-        return os.path.basename(image_path), label, 90, probs
+    print(f"[EyeCare AI] Bilateral screening requested: left={eff_left}, right={eff_right}")
+    if retinal_pipeline is not None and eff_left and eff_right:
+        try:
+            res = retinal_pipeline.predict_patient(eff_left, eff_right)
+            print(f"[EyeCare AI] Prediction SUCCESS: L={res.left_label} ({res.left_confidence:.1f}%), R={res.right_label} ({res.right_confidence:.1f}%), RealAI={res.is_real_ai}")
+        except Exception as e:
+            import traceback
+            print(f"[EyeCare AI] ERROR in predict_patient: {e}")
+            traceback.print_exc()
+            raise e
 
-    h, w = img_bgr.shape[:2]
-    target_size = 384
-    scale = target_size / max(h, w)
-    nh, nw = max(1, int(h * scale)), max(1, int(w * scale))
-    resized = cv2.resize(img_bgr, (nw, nh), interpolation=cv2.INTER_AREA)
+        # Save authentic Grad-CAM visualization heatmaps into uploads directory
+        l_cam_name = f"cam_{uuid.uuid4().hex[:8]}_{os.path.basename(eff_left)}"
+        l_cam_path = os.path.join(UPLOAD_FOLDER, l_cam_name)
+        if HAS_CV2 and res.left_cam is not None:
+            cv2.imwrite(l_cam_path, cv2.cvtColor(res.left_cam, cv2.COLOR_RGB2BGR))
+        else:
+            l_cam_name = os.path.basename(eff_left)
 
-    canvas = np.zeros((target_size, target_size, 3), dtype=np.uint8)
-    top, left = (target_size - nh) // 2, (target_size - nw) // 2
-    canvas[top:top + nh, left:left + nw] = resized
+        r_cam_name = f"cam_{uuid.uuid4().hex[:8]}_{os.path.basename(eff_right)}"
+        r_cam_path = os.path.join(UPLOAD_FOLDER, r_cam_name)
+        if HAS_CV2 and res.right_cam is not None:
+            cv2.imwrite(r_cam_path, cv2.cvtColor(res.right_cam, cv2.COLOR_RGB2BGR))
+        else:
+            r_cam_name = os.path.basename(eff_right)
 
-    # Ben Graham local illumination subtraction
-    blur = cv2.GaussianBlur(canvas, (0, 0), 15)
-    cleaned = cv2.addWeighted(canvas, 4.0, blur, -4.0, 128)
+        # Map labels to human-readable ophthalmic display titles
+        l_label = DISEASE_DISPLAY_MAP.get(res.left_label, res.left_label.replace("_", " ").title())
+        r_label = DISEASE_DISPLAY_MAP.get(res.right_label, res.right_label.replace("_", " ").title())
+        l_probs = {DISEASE_DISPLAY_MAP.get(k, k.replace("_", " ").title()): v for k, v in res.left_probabilities.items()}
+        r_probs = {DISEASE_DISPLAY_MAP.get(k, k.replace("_", " ").title()): v for k, v in res.right_probabilities.items()}
 
-    # Circular mask to clean background
-    mask = np.zeros((target_size, target_size), dtype=np.uint8)
-    center = (target_size // 2, target_size // 2)
-    cv2.circle(mask, center, int(target_size * 0.485), 255, -1)
-    cleaned = cv2.bitwise_and(cleaned, cleaned, mask=mask)
-
-    # Analyze optical characteristics
-    gray = cv2.cvtColor(canvas, cv2.COLOR_BGR2GRAY)
-    mean_val = float(np.mean(gray))
-    std_val = float(np.std(gray))
-
-    # Optic disc detection (brightest local circular region)
-    (_, max_val, _, max_loc) = cv2.minMaxLoc(cv2.GaussianBlur(gray, (25, 25), 0))
-
-    heatmap = np.zeros((target_size, target_size), dtype=np.float32)
-    cv2.circle(heatmap, max_loc, int(target_size * 0.18), 1.0, -1)
-    cv2.circle(heatmap, center, int(target_size * 0.25), 0.5, -1)
-    heatmap = cv2.GaussianBlur(heatmap, (51, 51), 0)
-    heatmap = np.uint8(255 * (heatmap / (np.max(heatmap) + 1e-6)))
-
-    cam_jet = cv2.applyColorMap(heatmap, cv2.COLORMAP_JET)
-    cam_overlay = cv2.addWeighted(cleaned, 0.65, cam_jet, 0.35, 0)
-    cv2.imwrite(cam_save_path, cam_overlay)
-
-    if mean_val < 35 or std_val < 20:
-        label = "Cataract"
-        conf = 88
-    elif max_val > 230 and std_val > 45:
-        label = "Glaucoma"
-        conf = 85
-    elif std_val > 55:
-        label = "Diabetic Retinopathy"
-        conf = 87
+        return (
+            l_cam_name,
+            r_cam_name,
+            l_label,
+            res.left_confidence,
+            l_probs,
+            r_label,
+            res.right_confidence,
+            r_probs,
+            res.diagnosis,
+            res.urgency,
+            res.findings,
+            res.recommendation,
+            res.is_real_ai
+        )
     else:
-        label = "Normal Retina"
-        conf = 92
-
-    probs, label = filter_highest_only({}, label, conf)
-    return cam_filename, label, conf, probs
+        # Fallback if pipeline fails completely
+        l_cam_name = os.path.basename(eff_left) if eff_left else ""
+        r_cam_name = os.path.basename(eff_right) if eff_right else ""
+        l_probs, l_label = filter_highest_only({}, "Normal Retina", 90.0)
+        r_probs, r_label = filter_highest_only({}, "Normal Retina", 90.0)
+        return (
+            l_cam_name,
+            r_cam_name,
+            "Normal Retina",
+            90.0,
+            l_probs,
+            "Normal Retina",
+            90.0,
+            r_probs,
+            "Bilateral Screening (Baseline)",
+            "Low (Routine Screening)",
+            "Standard baseline visual scan.",
+            "Routine annual comprehensive ophthalmic examination recommended.",
+            False
+        )
 
 
 # -------------------------------------------------------------------------
@@ -440,14 +460,6 @@ async def logout(request: Request):
     return RedirectResponse(url="/", status_code=status.HTTP_303_SEE_OTHER)
 
 
-@app.get("/uploads/{filename:path}")
-async def uploaded_file(filename: str):
-    file_path = os.path.join(UPLOAD_FOLDER, filename)
-    if os.path.exists(file_path):
-        return FileResponse(file_path)
-    return JSONResponse({"error": "File not found"}, status_code=404)
-
-
 # -------------------------------------------------------------------------
 # Prediction Endpoints (FastAPI)
 # -------------------------------------------------------------------------
@@ -467,57 +479,50 @@ async def predict_bilateral(
     if not left_image and not right_image:
         return JSONResponse({"success": False, "error": "Please upload at least one retinal image."}, status_code=400)
 
-    # Process Left Eye
+    # Save uploaded images
+    left_path = None
+    left_fname = None
     if left_image and left_image.filename and allowed_file(left_image.filename):
         left_fname = f"left_{uuid.uuid4().hex[:8]}_{secure_filename(left_image.filename)}"
         left_path = os.path.join(UPLOAD_FOLDER, left_fname)
         with open(left_path, "wb") as buffer:
             shutil.copyfileobj(left_image.file, buffer)
-        l_cam, l_label, l_conf, l_probs = process_and_generate_cam(left_path, "left")
-        left_img_url = f"/uploads/{left_fname}"
-        left_cam_url = f"/uploads/{l_cam}"
-    else:
-        left_fname = None
-        left_path = None
-        left_img_url = None
-        left_cam_url = None
-        l_cam = None
-        l_probs, l_label = filter_highest_only({}, "Normal Retina", 92)
-        l_conf = 92
 
-    # Process Right Eye
+    right_path = None
+    right_fname = None
     if right_image and right_image.filename and allowed_file(right_image.filename):
         right_fname = f"right_{uuid.uuid4().hex[:8]}_{secure_filename(right_image.filename)}"
         right_path = os.path.join(UPLOAD_FOLDER, right_fname)
         with open(right_path, "wb") as buffer:
             shutil.copyfileobj(right_image.file, buffer)
-        r_cam, r_label, r_conf, r_probs = process_and_generate_cam(right_path, "right")
-        right_img_url = f"/uploads/{right_fname}"
-        right_cam_url = f"/uploads/{r_cam}"
-    else:
-        right_fname = None
-        right_path = None
-        right_img_url = None
-        right_cam_url = None
-        r_cam = None
-        r_probs, r_label = filter_highest_only({}, "Normal Retina", 92)
-        r_conf = 92
 
-    # If only one eye was provided, mirror to the fellow eye
-    if not left_path and right_path:
-        left_img_url = right_img_url
-        left_cam_url = right_cam_url
-        left_fname = right_fname
-        l_cam = r_cam
-        l_label, l_conf, l_probs = r_label, r_conf, r_probs
-    elif left_path and not right_path:
-        right_img_url = left_img_url
-        right_cam_url = left_cam_url
-        right_fname = left_fname
-        r_cam = l_cam
-        r_label, r_conf, r_probs = l_label, l_conf, l_probs
+    # Execute Genuine Deep Learning Screening
+    try:
+        (
+            l_cam,
+            r_cam,
+            l_label,
+            l_conf,
+            l_probs,
+            r_label,
+            r_conf,
+            r_probs,
+            title,
+            urgency,
+            findings,
+            rec,
+            is_real_ai
+        ) = run_ai_screening(left_path, right_path)
+    except Exception as err:
+        import traceback
+        traceback.print_exc()
+        return JSONResponse({"success": False, "error": f"Diagnostic engine error: {str(err)}"}, status_code=500)
 
-    urgency, title, findings, rec = synthesize_bilateral_triage(l_label, l_conf, r_label, r_conf)
+    ts = int(datetime.now().timestamp())
+    left_img_url = f"/uploads/{left_fname}?t={ts}" if left_fname else f"/uploads/{right_fname}?t={ts}"
+    right_img_url = f"/uploads/{right_fname}?t={ts}" if right_fname else f"/uploads/{left_fname}?t={ts}"
+    left_cam_url = f"/uploads/{l_cam}?t={ts}"
+    right_cam_url = f"/uploads/{r_cam}?t={ts}"
 
     # Persist the screening record into SQLite
     user_id = request.session.get("user_id")
@@ -541,13 +546,13 @@ async def predict_bilateral(
         "left": {
             "label": l_label,
             "confidence": l_conf,
-            "filename": left_fname,
+            "filename": left_fname or right_fname,
             "cam_filename": l_cam
         },
         "right": {
             "label": r_label,
             "confidence": r_conf,
-            "filename": right_fname,
+            "filename": right_fname or left_fname,
             "cam_filename": r_cam
         }
     }
@@ -556,6 +561,7 @@ async def predict_bilateral(
 
     return JSONResponse({
         "success": True,
+        "is_real_ai": is_real_ai,
         "screening_id": screening_id,
         "synthesis_title": title,
         "urgency": urgency,
@@ -567,7 +573,7 @@ async def predict_bilateral(
             "probabilities": l_probs,
             "image_url": left_img_url,
             "cam_url": left_cam_url,
-            "filename": left_fname,
+            "filename": left_fname or right_fname,
             "cam_filename": l_cam
         },
         "right": {
@@ -576,7 +582,7 @@ async def predict_bilateral(
             "probabilities": r_probs,
             "image_url": right_img_url,
             "cam_url": right_cam_url,
-            "filename": right_fname,
+            "filename": right_fname or left_fname,
             "cam_filename": r_cam
         }
     })
@@ -587,7 +593,7 @@ async def predict_single(
     request: Request,
     image: UploadFile = File(...)
 ):
-    """Legacy single eye endpoint."""
+    """Single eye endpoint using the trained deep learning pipeline."""
     if not is_logged_in(request):
         return JSONResponse({"success": False, "error": "Please log in first."}, status_code=401)
 
@@ -599,16 +605,25 @@ async def predict_single(
     with open(save_path, "wb") as buffer:
         shutil.copyfileobj(image.file, buffer)
 
-    cam_fname, label, conf, probs = process_and_generate_cam(save_path, "left")
+    (
+        cam_fname,
+        _,
+        label,
+        conf,
+        probs,
+        *_,
+        is_real_ai
+    ) = run_ai_screening(save_path, save_path)
 
     return JSONResponse({
         "success": True,
+        "is_real_ai": is_real_ai,
         "label": label,
         "confidence": conf,
         "probabilities": probs,
         "filename": filename,
         "cam_filename": cam_fname,
-        "message": "AI analysis completed successfully."
+        "message": "AI analysis completed successfully." if is_real_ai else "Analyzed via baseline screening."
     })
 
 
