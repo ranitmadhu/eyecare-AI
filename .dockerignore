@@ -1,0 +1,36 @@
+__pycache__/
+*.py[cod]
+*$py.class
+*.pyc
+*.pyo
+*.pyd
+
+# Environments
+.venv/
+venv/
+myvenv/
+env/
+.env
+
+# Git metadata
+.git/
+.gitignore
+.gitattributes
+
+# Test & OS caches
+.pytest_cache/
+.coverage
+htmlcov/
+.DS_Store
+Thumbs.db
+
+# Large runtime uploads & outputs (mounted via Docker volumes instead)
+uploads/*
+!uploads/.gitkeep
+outputs/*
+!outputs/.gitkeep
+
+# Temporary backups
+*.bak
+*.tmp
+run_server.bat
